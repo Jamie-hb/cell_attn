@@ -6,11 +6,9 @@ import os
 import pandas as pd
 from warnings import warn
 
-import sys
-sys.path.insert(0, os.getcwd())
-import model_definition_utils 
-from cell_trajectory_data_utils import cellTrajectoriesDataset
-from training_utils import train_loop
+import cell_attn.model_definition_utils as model_definition_utils
+from cell_attn.cell_trajectory_data_utils import cellTrajectoriesDataset
+from cell_attn.training_utils import train_loop
 
 def train_deep_attention_network(datadir: str, stdir: str, 
                                  training_subdirs: list[str] | None =None, validation_subdirs: list[str] | None =None, 

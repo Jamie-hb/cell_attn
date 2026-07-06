@@ -7,10 +7,8 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 import os
 
-import sys
-sys.path.insert(0, os.getcwd())
-import model_definition_utils
-from cell_trajectory_data_utils import cellTrajectoriesDataset
+import cell_attn.model_definition_utils as model_definition_utils
+from cell_attn.cell_trajectory_data_utils import cellTrajectoriesDataset
 
 # -----------------------------------------------------------------------------
 
