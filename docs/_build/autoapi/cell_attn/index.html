@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cell_attn &mdash; cell_attn July 2026 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=41cf1731"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="cell_attn.cell_trajectory_data_utils" href="cell_trajectory_data_utils/index.html" />
+    <link rel="prev" title="API Reference" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            cell_attn
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">cell_attn</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cell_trajectory_data_utils/index.html">cell_attn.cell_trajectory_data_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="model_definition_utils/index.html">cell_attn.model_definition_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="model_evaluation_utils/index.html">cell_attn.model_evaluation_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="train_model/index.html">cell_attn.train_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="training_utils/index.html">cell_attn.training_utils</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#attributes">Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#classes">Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#package-contents">Package Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cell_attn.__version__"><code class="docutils literal notranslate"><span class="pre">__version__</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cell_attn.create_data_from_trajectories"><code class="docutils literal notranslate"><span class="pre">create_data_from_trajectories()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cell_attn.cellTrajectoriesDataset"><code class="docutils literal notranslate"><span class="pre">cellTrajectoriesDataset</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cell_attn.train_deep_attention_network"><code class="docutils literal notranslate"><span class="pre">train_deep_attention_network()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cell_attn.plot_attention_heatmap"><code class="docutils literal notranslate"><span class="pre">plot_attention_heatmap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cell_attn.plot_attraction_repulsion_heatmap"><code class="docutils literal notranslate"><span class="pre">plot_attraction_repulsion_heatmap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cell_attn.plot_alignment_heatmap"><code class="docutils literal notranslate"><span class="pre">plot_alignment_heatmap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cell_attn.load_model"><code class="docutils literal notranslate"><span class="pre">load_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cell_attn.load_data"><code class="docutils literal notranslate"><span class="pre">load_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cell_attn.plot_losses"><code class="docutils literal notranslate"><span class="pre">plot_losses()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cell_attn.plot_losses_per_epoch"><code class="docutils literal notranslate"><span class="pre">plot_losses_per_epoch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cell_attn.weight_distance_plot"><code class="docutils literal notranslate"><span class="pre">weight_distance_plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cell_attn.radial_weight_plot"><code class="docutils literal notranslate"><span class="pre">radial_weight_plot()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cell_attn</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+      <li class="breadcrumb-item active">cell_attn</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/autoapi/cell_attn/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-cell_attn">
+<span id="cell-attn"></span><h1>cell_attn<a class="headerlink" href="#module-cell_attn" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cell_trajectory_data_utils/index.html">cell_attn.cell_trajectory_data_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_definition_utils/index.html">cell_attn.model_definition_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_evaluation_utils/index.html">cell_attn.model_evaluation_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="train_model/index.html">cell_attn.train_model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="training_utils/index.html">cell_attn.training_utils</a></li>
+</ul>
+</div>
+</section>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cell_attn.__version__" title="cell_attn.__version__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__version__</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cell_attn.cellTrajectoriesDataset" title="cell_attn.cellTrajectoriesDataset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cellTrajectoriesDataset</span></code></a></p></td>
+<td><p>Dataset class for cell trajectory data.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cell_attn.create_data_from_trajectories" title="cell_attn.create_data_from_trajectories"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_data_from_trajectories</span></code></a>(X, nn, timestep, stdir)</p></td>
+<td><p>Takes in cell trajectory data in the form of a trajectory matrix, and creates input and label data ready to</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cell_attn.train_deep_attention_network" title="cell_attn.train_deep_attention_network"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train_deep_attention_network</span></code></a>(datadir, stdir[, ...])</p></td>
+<td><p>Trains a deep attention network on a cell trajectory data set.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cell_attn.plot_attention_heatmap" title="cell_attn.plot_attention_heatmap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_attention_heatmap</span></code></a>(model[, datadir, batch_size, ...])</p></td>
+<td><p>Plots an attention heatmap for a given trained deep attention network and DataLoader. Designed to</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cell_attn.plot_attraction_repulsion_heatmap" title="cell_attn.plot_attraction_repulsion_heatmap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_attraction_repulsion_heatmap</span></code></a>(model[, datadir, ...])</p></td>
+<td><p>Plots an attraction-repulsion heatmap for a given trained deep attention network and DataLoader. Designed to</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cell_attn.plot_alignment_heatmap" title="cell_attn.plot_alignment_heatmap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_alignment_heatmap</span></code></a>(model[, datadir, batch_size, ...])</p></td>
+<td><p>Plots an alignment heatmap for a given trained deep attention network and dataloader. Designed to</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cell_attn.load_model" title="cell_attn.load_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_model</span></code></a>(stdir)</p></td>
+<td><p>Load a deep attention network model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cell_attn.load_data" title="cell_attn.load_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_data</span></code></a>(datadir[, experiments, batch_size])</p></td>
+<td><p>Loads trajectory input and label data in the form of a DataLoader.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cell_attn.plot_losses" title="cell_attn.plot_losses"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_losses</span></code></a>(stdir[, w])</p></td>
+<td><p>Plot the test and training loss from the training process of a model. Designed to</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cell_attn.plot_losses_per_epoch" title="cell_attn.plot_losses_per_epoch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_losses_per_epoch</span></code></a>(stdir[, w])</p></td>
+<td><p>Plots the test loss after each epoch. Designed to</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#cell_attn.weight_distance_plot" title="cell_attn.weight_distance_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weight_distance_plot</span></code></a>(model, dataloader[, ...])</p></td>
+<td><p>Plots normalised weight vs distance for one batch of a given DataLoader. Designed to</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#cell_attn.radial_weight_plot" title="cell_attn.radial_weight_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radial_weight_plot</span></code></a>(model, rlim[, r_meshsize, ...])</p></td>
+<td><p>Plots radially averaged weight vs distance for the weight function of a deep atttention network.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="package-contents">
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="cell_attn.__version__">
+<span class="sig-prename descclassname"><span class="pre">cell_attn.</span></span><span class="sig-name descname"><span class="pre">__version__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0.1.0'</span></em><a class="headerlink" href="#cell_attn.__version__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cell_attn.create_data_from_trajectories">
+<span class="sig-prename descclassname"><span class="pre">cell_attn.</span></span><span class="sig-name descname"><span class="pre">create_data_from_trajectories</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_saver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cell_attn.create_data_from_trajectories" title="Link to this definition"></a></dt>
+<dd><p>Takes in cell trajectory data in the form of a trajectory matrix, and creates input and label data ready to
+be trained on by a deep attention network.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>X: numpy.ndarray</dt><dd><p>Cell trajectory data matrix (dimension 2 x n_cells x n_timepoints), where X[0,i,t] = x co-ordinate of cell i at time t, and X[1,i,t] = y co-ordinate of cell i at time t.</p>
+</dd>
+<dt>nn: int</dt><dd><p>Number of nearest neighbours.</p>
+</dd>
+<dt>timestep: int</dt><dd><p>Time interval to predict focal cell movement over, measured in indices of the trajectory data matrix.</p>
+</dd>
+<dt>stdir: str</dt><dd><p>Directory to store input and label data in.</p>
+</dd>
+<dt>t_min: int | None, default=0</dt><dd><p>Lower limit of time window of trajectory data to use. If given will filter X down to X[:,:,t_min:] before other computations.</p>
+</dd>
+<dt>t_max: int | None, default=None</dt><dd><p>Upper limit of time window of trajectory data to use. If given will filter X down to X[:,:,:t_max] before other computations.</p>
+</dd>
+<dt>memory_saver: bool, default=False</dt><dd><p>If memory_saver=True, then a more memory efficient (but slower) algorithm will be used. Note this will only use a significantly
+lower amount of memory if the trajectory data matrix contains a significant amount of missing data.</p>
+</dd>
+</dl>
+</section>
+<section id="creates-the-following-files-in-stdir">
+<h3>Creates the following files in stdir:<a class="headerlink" href="#creates-the-following-files-in-stdir" title="Link to this heading"></a></h3>
+<dl>
+<dt>input_data.npy: numpy.ndarray</dt><dd><p>Dimension (n_datapoints x n_nbhs x 12) numpy array. input_data[i] is a 2d numpy array with rows corresponding
+to the nearest neighbour cells of a focal cell, and the columns are (with {num columns})</p>
+<blockquote>
+<div><p>nbh_cell_displacement_x _y {2}, focal_cell_velocity_x _y {2}, nbh_cell_velocity_x _y {2},
+nbh_cell_displacement_x _y (fcc) {2}.</p>
+</div></blockquote>
+<p>fcc (focal cell coordinates) indicates that the vector is given in coordinates where the y-axis aligns
+with the focal cell’s velocity.</p>
+</dd>
+<dt>labels.npy: numpy.ndarray:</dt><dd><p>Dimension (n_datapoints x 2) numpy array, where row i is the next displacement of the focal cell for input_data[i], measured over the given timestep.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cell_attn.cellTrajectoriesDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cell_attn.</span></span><span class="sig-name descname"><span class="pre">cellTrajectoriesDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiments=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsamples_per_run=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device=torch.device('cuda'</span> <span class="pre">if</span> <span class="pre">torch.cuda.is_available()</span> <span class="pre">else</span> <span class="pre">'cpu')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cell_attn.cellTrajectoriesDataset" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code></p>
+<p>Dataset class for cell trajectory data.</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>directory: str</dt><dd><p>Directory where input and label data is stored, within this directory should be a set of subdirectories, one for each experiment, each containing
+a input data file called input_data.npy, and label files called labels.npy, as created by create_data_from_trajectories().</p>
+</dd>
+<dt>experiments: list[str] | None, default=None</dt><dd><p>Specify which experiments to take data from for the dataset. Each element of the list should be the name of a subdirectory of directory.</p>
+</dd>
+<dt>nsamples_per_run: int | None, default=None</dt><dd><p>Only include a fixed number of data points per experiment (chosen uniformly at random).</p>
+</dd>
+<dt>device: torch.device, default=torch.device(‘cuda’ if torch.cuda.is_available() else ‘cpu’)</dt><dd><p>What device to put the dataset on.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cell_attn.cellTrajectoriesDataset.trajectories">
+<span class="sig-name descname"><span class="pre">trajectories</span></span><a class="headerlink" href="#cell_attn.cellTrajectoriesDataset.trajectories" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cell_attn.cellTrajectoriesDataset.labels">
+<span class="sig-name descname"><span class="pre">labels</span></span><a class="headerlink" href="#cell_attn.cellTrajectoriesDataset.labels" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="cell_attn.cellTrajectoriesDataset.device">
+<span class="sig-name descname"><span class="pre">device</span></span><a class="headerlink" href="#cell_attn.cellTrajectoriesDataset.device" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cell_attn.cellTrajectoriesDataset.__len__">
+<span class="sig-name descname"><span class="pre">__len__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cell_attn.cellTrajectoriesDataset.__len__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cell_attn.cellTrajectoriesDataset.__getitem__">
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cell_attn.cellTrajectoriesDataset.__getitem__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cell_attn.train_deep_attention_network">
+<span class="sig-prename descclassname"><span class="pre">cell_attn.</span></span><span class="sig-name descname"><span class="pre">train_deep_attention_network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datadir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_subdirs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_subdirs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_speed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_epochs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">patience</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">burn_in</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[0.001,</span> <span class="pre">1e-05]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cell_attn.train_deep_attention_network" title="Link to this definition"></a></dt>
+<dd><p>Trains a deep attention network on a cell trajectory data set.</p>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>datadir: str</dt><dd><p>Directory containing the input and label data. Should contain sub-directories named “training_data”
+and “validation_data”, within each are directories containing the input and label data for each experiment.</p>
+</dd>
+<dt>stdir: str</dt><dd><p>Directory to store trained model and training metrics in. Model state_dict will be stored at stdir/model.pth.</p>
+</dd>
+<dt>training_subdirs: list[str] | None, default=None</dt><dd><p>Specify to use only certain experiments for training data. Each entry must be a subdirectory in datadir/training_data/.</p>
+</dd>
+<dt>validation_subdirs: list[str] | None, default=None</dt><dd><p>Specify to use only certain experiments for validation data. Each entry must be a subdirectory in datadir/validation_data/.</p>
+</dd>
+<dt>training_speed: str, default=’auto’:</dt><dd><p>Specify what training behaviour to use. Must be one of ‘auto’, ‘short’ or ‘long’.
+‘auto’ sets the number of epochs to the equivalent of 750000 batches of batch size 500. Empirically this is always enough
+to reach a near minimal loss. ‘short’ and ‘long’ reduce/increase the number of epochs, patience and burn-in respectively.
+If all of batch_size, num_epochs, patience and burn_in are given, they will override the training_speed argument.
+If some but not all of these are given, then the behaviour specified by training_speed will take precedence.</p>
+</dd>
+<dt>batch_size: int | None, default=None</dt><dd><p>Batch size to use for training.
+If batch_size, num_epochs, patience and burn_in are given, this will override the training_speed argument.
+If some but not all of these are given, then the behaviour specified by training_speed will take precedence.</p>
+</dd>
+<dt>num_epochs: int | None, default=None</dt><dd><p>Maximum number of epochs to train for.
+If batch_size, num_epochs, patience and burn_in are given, this will override the training_speed argument.
+If some but not all of these are given, then the behaviour specified by training_speed will take precedence.</p>
+</dd>
+<dt>patience: int | None, default=None</dt><dd><p>Number of epochs to allow a lack of improvement for before terminating training.
+To disable early stopping set this equal to num_epochs.
+If batch_size, num_epochs, patience and burn_in are given, this will override the training_speed argument.
+If some but not all of these are given, then the behaviour specified by training_speed will take precedence.</p>
+</dd>
+<dt>burn_in: int | None, default=None</dt><dd><p>Number of epochs to wait before beginning counting for early stopping.
+If batch_size, patience, patience and burn_in are given, this will override the training_speed argument.
+If some but not all of these are given, then the behaviour specified by training_speed will take precedence.</p>
+</dd>
+<dt>learning_rate: list[float], default=[0.001, 0.00001]</dt><dd><p>Maximum and minimum learning rate to anneal between.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cell_attn.plot_attention_heatmap">
+<span class="sig-prename descclassname"><span class="pre">cell_attn.</span></span><span class="sig-name descname"><span class="pre">plot_attention_heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datadir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.utils.data.DataLoader</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">palette</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'gnuplot'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_ndp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cell_attn.plot_attention_heatmap" title="Link to this definition"></a></dt>
+<dd><p>Plots an attention heatmap for a given trained deep attention network and DataLoader. Designed to
+be called with an active matplotlib.pyplot.figure.</p>
+<section id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>model: model_definition_utils.velocity_predictor</dt><dd><p>Trained deep attention network, loaded in using load_model().</p>
+</dd>
+<dt>datadir: str, default=None</dt><dd><p>Directory containing input data. Should have subdirectories for each experiment.</p>
+</dd>
+<dt>batch_size: int, default=20000</dt><dd><p>How many individual focal &amp; neighbour cell plots to superimpose.</p>
+</dd>
+<dt>dataloader: torch.utils.data.DataLoader | None, default=None</dt><dd><p>Dataloader to draw data from for plotting. Specifying this overrides datadir, experiments, and batch_size.
+Negates the need to construct a DataLoader from datadir.</p>
+</dd>
+<dt>experiments: list[str] | None, default=None</dt><dd><p>If constructing a DataLoader, specify which experiments to take data from.</p>
+</dd>
+<dt>point_size: float, default=1</dt><dd><p>Size of points in the AHM. Passed to s in seaborn.scatterplot().</p>
+</dd>
+<dt>min_weight: float | None, default=None</dt><dd><p>Specify the lower weight to normalise the colour palette to. If None, will bet set to the 1st percentile of the
+computed weights.</p>
+</dd>
+<dt>max_weight: float | None, default=None</dt><dd><p>Specify the upper weight to normalise the colour palette to. If None, will be set to the 99th percentile of the
+computed weights.</p>
+</dd>
+<dt>palette: str, default=’gnuplot’</dt><dd><p>Specify which matplotlib colour palette to use.</p>
+</dd>
+<dt>colorbar_ndp: int | None, default=None</dt><dd><p>Number of decimal places to round color bar labels to.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cell_attn.plot_attraction_repulsion_heatmap">
+<span class="sig-prename descclassname"><span class="pre">cell_attn.</span></span><span class="sig-name descname"><span class="pre">plot_attraction_repulsion_heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datadir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.utils.data.DataLoader</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_timestep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">palette</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'seismic_r'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_ndp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cell_attn.plot_attraction_repulsion_heatmap" title="Link to this definition"></a></dt>
+<dd><p>Plots an attraction-repulsion heatmap for a given trained deep attention network and DataLoader. Designed to
+be called with an active matplotlib.pyplot.figure.</p>
+<section id="id4">
+<h3>Parameters<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>model: model_definition_utils.velocity_predictor</dt><dd><p>Trained deep attention network, loaded in using load_model().</p>
+</dd>
+<dt>datadir: str, default=None</dt><dd><p>Directory containing input data. Should have subdirectories for each experiment.</p>
+</dd>
+<dt>batch_size: int, default=20000</dt><dd><p>How many individual focal &amp; neighbour cell plots to superimpose.</p>
+</dd>
+<dt>dataloader: torch.utils.data.DataLoader | None, default=None</dt><dd><p>DataLoader to draw data from for plotting. Specifying this overrides datadir, experiments, and batch_size.
+Negates the need to construct a DataLoader from datadir.</p>
+</dd>
+<dt>experiments: list[str] | None, default=None</dt><dd><p>Specify which experiments to take data from for the DataLoader, if constructing one.</p>
+</dd>
+<dt>prediction_timestep: int, default=1</dt><dd><p>Length of the interval over which the deep attention network was trained to predict cell displacement over.</p>
+</dd>
+<dt>point_size: float, default=1</dt><dd><p>Size of points in the ARHM. Passed to s in seaborn.scatterplot().</p>
+</dd>
+<dt>palette: str, default=’seismic_r’</dt><dd><p>Specify which matplotlib colour palette to use.</p>
+</dd>
+<dt>colorbar_ndp: int | None, default=None</dt><dd><p>Number of decimal places to round colour bar labels to.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cell_attn.plot_alignment_heatmap">
+<span class="sig-prename descclassname"><span class="pre">cell_attn.</span></span><span class="sig-name descname"><span class="pre">plot_alignment_heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datadir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.utils.data.DataLoader</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">palette</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'seismic_r'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_ndp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cell_attn.plot_alignment_heatmap" title="Link to this definition"></a></dt>
+<dd><p>Plots an alignment heatmap for a given trained deep attention network and dataloader. Designed to
+be called with an active matplotlib.pyplot.figure.</p>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>model: model_definition_utils.velocity_predictor</dt><dd><p>Trained deep attention network, loaded in using load_model().</p>
+</dd>
+<dt>datadir: str, default=None</dt><dd><p>Directory containing input data. Should have subdirectories for each experiment.</p>
+</dd>
+<dt>batch_size: int, default=20000</dt><dd><p>How many individual focal &amp; neighbour cell plots to superimpose.</p>
+</dd>
+<dt>dataloader: torch.utils.data.DataLoader | None, default=None</dt><dd><p>DataLoader to draw data from for plotting. Specifying this overrides datadir, experiments, and batch_size.
+Negates the need to construct a DataLoader from datadir.</p>
+</dd>
+<dt>experiments: list[str] | None, default=None</dt><dd><p>Specify which experiments to take data from for the dataset, if loading in a dataset from datadir.</p>
+</dd>
+<dt>point_size: float, default=1</dt><dd><p>Size of points in the ARHM. Passed to s in seaborn.scatterplot().</p>
+</dd>
+<dt>palette: str, default=’seismic_r’</dt><dd><p>Specify which matplotlib colour palette to use.</p>
+</dd>
+<dt>colorbar_ndp: int | None, default=None</dt><dd><p>Number of decimal places to round colour bar labels to.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cell_attn.load_model">
+<span class="sig-prename descclassname"><span class="pre">cell_attn.</span></span><span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cell_attn.load_model" title="Link to this definition"></a></dt>
+<dd><p>Load a deep attention network model.</p>
+<section id="id6">
+<h3>Parameters<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>stdir: str</dt><dd><p>Directory where the deep attention network is stored, state_dict should be stored at stdir/model.pth.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>model: model_definition_utils.velocity_predictor</dt><dd><p>Deep attention network model.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cell_attn.load_data">
+<span class="sig-prename descclassname"><span class="pre">cell_attn.</span></span><span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datadir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cell_attn.load_data" title="Link to this definition"></a></dt>
+<dd><p>Loads trajectory input and label data in the form of a DataLoader.</p>
+<section id="id7">
+<h3>Parameters<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>datadir: str</dt><dd><p>Directory where input and label data are stored, within this directory should be a set of subdirectories,
+one for each experiment, each containing a input data file called input_data.npy, and label files
+called labels.npy, as created by create_data_from_trajectories().</p>
+</dd>
+<dt>experiments: list[str] | None, default=None</dt><dd><p>Specify which experiments to take data from for the dataset.</p>
+</dd>
+<dt>batch_size: int, default=20000</dt><dd><p>Batch size of the DataLoader.</p>
+</dd>
+</dl>
+</section>
+<section id="id8">
+<h3>Returns<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dataloader: torch.utils.data.DataLoader</dt><dd><p>DataLoader for trajectory data.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cell_attn.plot_losses">
+<span class="sig-prename descclassname"><span class="pre">cell_attn.</span></span><span class="sig-name descname"><span class="pre">plot_losses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cell_attn.plot_losses" title="Link to this definition"></a></dt>
+<dd><p>Plot the test and training loss from the training process of a model. Designed to
+be called with an active matplotlib.pyplot.figure.</p>
+<section id="id9">
+<h3>Parameters<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>stdir: str</dt><dd><p>Directory where the model (and thus loss files) are stored.</p>
+</dd>
+<dt>w: float, default=0.01</dt><dd><p>Parameter controlling the degree of smoothing in the plots. A
+lower w leads to a smoother average. See ewma() for details.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cell_attn.plot_losses_per_epoch">
+<span class="sig-prename descclassname"><span class="pre">cell_attn.</span></span><span class="sig-name descname"><span class="pre">plot_losses_per_epoch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cell_attn.plot_losses_per_epoch" title="Link to this definition"></a></dt>
+<dd><p>Plots the test loss after each epoch. Designed to
+be called with an active matplotlib.pyplot.figure.</p>
+<section id="id10">
+<h3>Parameters<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>stdir: str</dt><dd><p>Directory where the model (and thus loss files) are stored.</p>
+</dd>
+<dt>w: float, default=0.01</dt><dd><p>Parameter controlling the degree of smoothing in the plots. A
+lower w leads to a smoother average. See ewma() for details.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cell_attn.weight_distance_plot">
+<span class="sig-prename descclassname"><span class="pre">cell_attn.</span></span><span class="sig-name descname"><span class="pre">weight_distance_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.utils.data.DataLoader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_averages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avg_xlim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_bins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attraction_scores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_timestep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cell_attn.weight_distance_plot" title="Link to this definition"></a></dt>
+<dd><p>Plots normalised weight vs distance for one batch of a given DataLoader. Designed to
+be called with an active matplotlib.pyplot.figure.</p>
+<section id="id11">
+<h3>Parameters<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>model: model_definition_utils.velocity_predictor</dt><dd><p>Trained deep attention network, loaded in using load_model().</p>
+</dd>
+<dt>dataloader: torch.data.DataLoader</dt><dd><p>Cell trajectory DataLoader.</p>
+</dd>
+<dt>plot_averages: bool, default=True</dt><dd><p>If True, will plot average weight against distance from neighbour cells.</p>
+</dd>
+<dt>avg_xlim: tuple[float,float] | None, default=None</dt><dd><p>Specify distance limits to plot average weight between.</p>
+</dd>
+<dt>n_bins: int, default=100</dt><dd><p>Number of points to plot average weight at.</p>
+</dd>
+<dt>attraction_scores: bool, default=False</dt><dd><p>If True, colour points by attraction score.</p>
+</dd>
+<dt>point_size: float, default=0.1</dt><dd><p>Size of points. Passed to s in seaborn.scatterplot.</p>
+</dd>
+<dt>prediction_timestep: int, default=1</dt><dd><p>Timestep over which the deep attention network is trained to predict over.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cell_attn.radial_weight_plot">
+<span class="sig-prename descclassname"><span class="pre">cell_attn.</span></span><span class="sig-name descname"><span class="pre">radial_weight_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rlim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_meshsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta_meshsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cell_attn.radial_weight_plot" title="Link to this definition"></a></dt>
+<dd><p>Plots radially averaged weight vs distance for the weight function of a deep atttention network.
+Designed to be called with an active matplotlib.pyplot.figure.</p>
+<section id="id12">
+<h3>Parameters<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>model: model_definition_utils.velocity_predictor</dt><dd><p>Trained deep attention network, loaded in using load_model().</p>
+</dd>
+<dt>rlim: tuple[float,float]</dt><dd><p>Limits to compute average weight between.</p>
+</dd>
+<dt>r_meshsize: int, default=100</dt><dd><p>Number of points to compute average weight at.</p>
+</dd>
+<dt>theta_meshsize: int, default=100</dt><dd><p>Number of angles to use when computing average weight.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cell_trajectory_data_utils/index.html" class="btn btn-neutral float-right" title="cell_attn.cell_trajectory_data_utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, James Boyle.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

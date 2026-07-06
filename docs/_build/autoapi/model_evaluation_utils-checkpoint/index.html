@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>model_evaluation_utils-checkpoint &mdash; cell_attn July 2026 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=41cf1731"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="cell_trajectory_data_utils-checkpoint" href="../cell_trajectory_data_utils-checkpoint/index.html" />
+    <link rel="prev" title="model_definition_utils-checkpoint" href="../model_definition_utils-checkpoint/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            cell_attn
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../cell_attn/index.html">cell_attn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../__init__-checkpoint/index.html">__init__-checkpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../train_model-checkpoint/index.html">train_model-checkpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../training_utils-checkpoint/index.html">training_utils-checkpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../model_definition_utils-checkpoint/index.html">model_definition_utils-checkpoint</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">model_evaluation_utils-checkpoint</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#model_evaluation_utils-checkpoint.load_model"><code class="docutils literal notranslate"><span class="pre">load_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#model_evaluation_utils-checkpoint.load_data"><code class="docutils literal notranslate"><span class="pre">load_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#model_evaluation_utils-checkpoint.plot_losses"><code class="docutils literal notranslate"><span class="pre">plot_losses()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#model_evaluation_utils-checkpoint.plot_losses_per_epoch"><code class="docutils literal notranslate"><span class="pre">plot_losses_per_epoch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#model_evaluation_utils-checkpoint.ewma"><code class="docutils literal notranslate"><span class="pre">ewma()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#model_evaluation_utils-checkpoint.plot_attention_heatmap"><code class="docutils literal notranslate"><span class="pre">plot_attention_heatmap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#model_evaluation_utils-checkpoint.plot_weight_function"><code class="docutils literal notranslate"><span class="pre">plot_weight_function()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#model_evaluation_utils-checkpoint.plot_attraction_repulsion_heatmap"><code class="docutils literal notranslate"><span class="pre">plot_attraction_repulsion_heatmap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#model_evaluation_utils-checkpoint.plot_alignment_heatmap"><code class="docutils literal notranslate"><span class="pre">plot_alignment_heatmap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#model_evaluation_utils-checkpoint.weight_distance_plot"><code class="docutils literal notranslate"><span class="pre">weight_distance_plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#model_evaluation_utils-checkpoint.radial_weight_plot"><code class="docutils literal notranslate"><span class="pre">radial_weight_plot()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../cell_trajectory_data_utils-checkpoint/index.html">cell_trajectory_data_utils-checkpoint</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cell_attn</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+      <li class="breadcrumb-item active">model_evaluation_utils-checkpoint</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/autoapi/model_evaluation_utils-checkpoint/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-model_evaluation_utils-checkpoint">
+<span id="model-evaluation-utils-checkpoint"></span><h1>model_evaluation_utils-checkpoint<a class="headerlink" href="#module-model_evaluation_utils-checkpoint" title="Link to this heading"></a></h1>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#model_evaluation_utils-checkpoint.load_model" title="model_evaluation_utils-checkpoint.load_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_model</span></code></a>(stdir)</p></td>
+<td><p>Load a deep attention network model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#model_evaluation_utils-checkpoint.load_data" title="model_evaluation_utils-checkpoint.load_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_data</span></code></a>(datadir[, experiments, batch_size])</p></td>
+<td><p>Loads trajectory input and label data in the form of a DataLoader.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#model_evaluation_utils-checkpoint.plot_losses" title="model_evaluation_utils-checkpoint.plot_losses"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_losses</span></code></a>(stdir[, w])</p></td>
+<td><p>Plot the test and training loss from the training process of a model. Designed to</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#model_evaluation_utils-checkpoint.plot_losses_per_epoch" title="model_evaluation_utils-checkpoint.plot_losses_per_epoch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_losses_per_epoch</span></code></a>(stdir[, w])</p></td>
+<td><p>Plots the test loss after each epoch. Designed to</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#model_evaluation_utils-checkpoint.ewma" title="model_evaluation_utils-checkpoint.ewma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ewma</span></code></a>(x, w)</p></td>
+<td><p>Computes an exponential weighted moving average of a time series. Called by plot_losses().</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#model_evaluation_utils-checkpoint.plot_attention_heatmap" title="model_evaluation_utils-checkpoint.plot_attention_heatmap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_attention_heatmap</span></code></a>(model[, datadir, batch_size, ...])</p></td>
+<td><p>Plots an attention heatmap for a given trained deep attention network and DataLoader. Designed to</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#model_evaluation_utils-checkpoint.plot_weight_function" title="model_evaluation_utils-checkpoint.plot_weight_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_weight_function</span></code></a>(model, xlim, ylim[, palette, ...])</p></td>
+<td><p>Plot the trained weight function of a deep attention network. Designed to</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#model_evaluation_utils-checkpoint.plot_attraction_repulsion_heatmap" title="model_evaluation_utils-checkpoint.plot_attraction_repulsion_heatmap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_attraction_repulsion_heatmap</span></code></a>(model[, datadir, ...])</p></td>
+<td><p>Plots an attraction-repulsion heatmap for a given trained deep attention network and DataLoader. Designed to</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#model_evaluation_utils-checkpoint.plot_alignment_heatmap" title="model_evaluation_utils-checkpoint.plot_alignment_heatmap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_alignment_heatmap</span></code></a>(model[, datadir, batch_size, ...])</p></td>
+<td><p>Plots an alignment heatmap for a given trained deep attention network and dataloader. Designed to</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#model_evaluation_utils-checkpoint.weight_distance_plot" title="model_evaluation_utils-checkpoint.weight_distance_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weight_distance_plot</span></code></a>(model, dataloader[, ...])</p></td>
+<td><p>Plots normalised weight vs distance for one batch of a given DataLoader. Designed to</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#model_evaluation_utils-checkpoint.radial_weight_plot" title="model_evaluation_utils-checkpoint.radial_weight_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radial_weight_plot</span></code></a>(model, rlim[, r_meshsize, ...])</p></td>
+<td><p>Plots radially averaged weight vs distance for the weight function of a deep atttention network.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="model_evaluation_utils-checkpoint.load_model">
+<span class="sig-prename descclassname"><span class="pre">model_evaluation_utils-checkpoint.</span></span><span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_evaluation_utils-checkpoint.load_model" title="Link to this definition"></a></dt>
+<dd><p>Load a deep attention network model.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>stdir: str</dt><dd><p>Directory where the deep attention network is stored, state_dict should be stored at stdir/model.pth.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>model: model_definition_utils.velocity_predictor</dt><dd><p>Deep attention network model.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="model_evaluation_utils-checkpoint.load_data">
+<span class="sig-prename descclassname"><span class="pre">model_evaluation_utils-checkpoint.</span></span><span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datadir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_evaluation_utils-checkpoint.load_data" title="Link to this definition"></a></dt>
+<dd><p>Loads trajectory input and label data in the form of a DataLoader.</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>datadir: str</dt><dd><p>Directory where input and label data are stored, within this directory should be a set of subdirectories,
+one for each experiment, each containing a input data file called input_data.npy, and label files
+called labels.npy, as created by create_data_from_trajectories().</p>
+</dd>
+<dt>experiments: list[str] | None, default=None</dt><dd><p>Specify which experiments to take data from for the dataset.</p>
+</dd>
+<dt>batch_size: int, default=20000</dt><dd><p>Batch size of the DataLoader.</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h3>Returns<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dataloader: torch.utils.data.DataLoader</dt><dd><p>DataLoader for trajectory data.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="model_evaluation_utils-checkpoint.plot_losses">
+<span class="sig-prename descclassname"><span class="pre">model_evaluation_utils-checkpoint.</span></span><span class="sig-name descname"><span class="pre">plot_losses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_evaluation_utils-checkpoint.plot_losses" title="Link to this definition"></a></dt>
+<dd><p>Plot the test and training loss from the training process of a model. Designed to
+be called with an active matplotlib.pyplot.figure.</p>
+<section id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>stdir: str</dt><dd><p>Directory where the model (and thus loss files) are stored.</p>
+</dd>
+<dt>w: float, default=0.01</dt><dd><p>Parameter controlling the degree of smoothing in the plots. A
+lower w leads to a smoother average. See ewma() for details.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="model_evaluation_utils-checkpoint.plot_losses_per_epoch">
+<span class="sig-prename descclassname"><span class="pre">model_evaluation_utils-checkpoint.</span></span><span class="sig-name descname"><span class="pre">plot_losses_per_epoch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_evaluation_utils-checkpoint.plot_losses_per_epoch" title="Link to this definition"></a></dt>
+<dd><p>Plots the test loss after each epoch. Designed to
+be called with an active matplotlib.pyplot.figure.</p>
+<section id="id4">
+<h3>Parameters<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>stdir: str</dt><dd><p>Directory where the model (and thus loss files) are stored.</p>
+</dd>
+<dt>w: float, default=0.01</dt><dd><p>Parameter controlling the degree of smoothing in the plots. A
+lower w leads to a smoother average. See ewma() for details.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="model_evaluation_utils-checkpoint.ewma">
+<span class="sig-prename descclassname"><span class="pre">model_evaluation_utils-checkpoint.</span></span><span class="sig-name descname"><span class="pre">ewma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_evaluation_utils-checkpoint.ewma" title="Link to this definition"></a></dt>
+<dd><p>Computes an exponential weighted moving average of a time series. Called by plot_losses().</p>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>x: 1d array</dt><dd><p>Time series data.</p>
+</dd>
+<dt>w: float</dt><dd><p>Weight to use in ewma calculation. Lower w leads to smoother average.</p>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h3>Returns<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>x_smoothed: list</dt><dd><p>A smoothed version of x.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="model_evaluation_utils-checkpoint.plot_attention_heatmap">
+<span class="sig-prename descclassname"><span class="pre">model_evaluation_utils-checkpoint.</span></span><span class="sig-name descname"><span class="pre">plot_attention_heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datadir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.utils.data.DataLoader</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">palette</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'gnuplot'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_ndp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_evaluation_utils-checkpoint.plot_attention_heatmap" title="Link to this definition"></a></dt>
+<dd><p>Plots an attention heatmap for a given trained deep attention network and DataLoader. Designed to
+be called with an active matplotlib.pyplot.figure.</p>
+<section id="id7">
+<h3>Parameters<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>model: model_definition_utils.velocity_predictor</dt><dd><p>Trained deep attention network, loaded in using load_model().</p>
+</dd>
+<dt>datadir: str, default=None</dt><dd><p>Directory containing input data. Should have subdirectories for each experiment.</p>
+</dd>
+<dt>batch_size: int, default=20000</dt><dd><p>How many individual focal &amp; neighbour cell plots to superimpose.</p>
+</dd>
+<dt>dataloader: torch.utils.data.DataLoader | None, default=None</dt><dd><p>Dataloader to draw data from for plotting. Specifying this overrides datadir, experiments, and batch_size.
+Negates the need to construct a DataLoader from datadir.</p>
+</dd>
+<dt>experiments: list[str] | None, default=None</dt><dd><p>If constructing a DataLoader, specify which experiments to take data from.</p>
+</dd>
+<dt>point_size: float, default=1</dt><dd><p>Size of points in the AHM. Passed to s in seaborn.scatterplot().</p>
+</dd>
+<dt>min_weight: float | None, default=None</dt><dd><p>Specify the lower weight to normalise the colour palette to. If None, will bet set to the 1st percentile of the
+computed weights.</p>
+</dd>
+<dt>max_weight: float | None, default=None</dt><dd><p>Specify the upper weight to normalise the colour palette to. If None, will be set to the 99th percentile of the
+computed weights.</p>
+</dd>
+<dt>palette: str, default=’gnuplot’</dt><dd><p>Specify which matplotlib colour palette to use.</p>
+</dd>
+<dt>colorbar_ndp: int | None, default=None</dt><dd><p>Number of decimal places to round color bar labels to.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="model_evaluation_utils-checkpoint.plot_weight_function">
+<span class="sig-prename descclassname"><span class="pre">model_evaluation_utils-checkpoint.</span></span><span class="sig-name descname"><span class="pre">plot_weight_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">palette</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'gnuplot'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_radius</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_center</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_ndp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_evaluation_utils-checkpoint.plot_weight_function" title="Link to this definition"></a></dt>
+<dd><p>Plot the trained weight function of a deep attention network. Designed to
+be called with an active matplotlib.pyplot.figure.</p>
+<section id="id8">
+<h3>Parameters<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>model: model_definition_utils.velocity_predictor</dt><dd><p>Trained deep attention network, loaded in using load_model().</p>
+</dd>
+<dt>xlim: tuple[float,float]</dt><dd><p>Limits for horizontal axis of plot.</p>
+</dd>
+<dt>xlim: tuple[float,float]</dt><dd><p>Limits for vertical axis of plot.</p>
+</dd>
+<dt>pallete: str, default=’gnuplot’</dt><dd><p>Name of matplotlib colour palette to use.</p>
+</dd>
+<dt>cutoff_radius: float, default=None</dt><dd><p>If show_center=False, grey out all points inside this radius.</p>
+</dd>
+<dt>show_center: bool, default=True</dt><dd><p>Specify whether to plot points near the origin. If False, grey out all points
+inside the cutoff_radius.</p>
+</dd>
+<dt>min_weight: float, default=0</dt><dd><p>Snap all weights below min_weight to min_weight.</p>
+</dd>
+<dt>colorbar_ndp: int | None, default=None</dt><dd><p>Number of decimal places to round colour bar labels to.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="model_evaluation_utils-checkpoint.plot_attraction_repulsion_heatmap">
+<span class="sig-prename descclassname"><span class="pre">model_evaluation_utils-checkpoint.</span></span><span class="sig-name descname"><span class="pre">plot_attraction_repulsion_heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datadir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.utils.data.DataLoader</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_timestep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">palette</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'seismic_r'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_ndp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_evaluation_utils-checkpoint.plot_attraction_repulsion_heatmap" title="Link to this definition"></a></dt>
+<dd><p>Plots an attraction-repulsion heatmap for a given trained deep attention network and DataLoader. Designed to
+be called with an active matplotlib.pyplot.figure.</p>
+<section id="id9">
+<h3>Parameters<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>model: model_definition_utils.velocity_predictor</dt><dd><p>Trained deep attention network, loaded in using load_model().</p>
+</dd>
+<dt>datadir: str, default=None</dt><dd><p>Directory containing input data. Should have subdirectories for each experiment.</p>
+</dd>
+<dt>batch_size: int, default=20000</dt><dd><p>How many individual focal &amp; neighbour cell plots to superimpose.</p>
+</dd>
+<dt>dataloader: torch.utils.data.DataLoader | None, default=None</dt><dd><p>DataLoader to draw data from for plotting. Specifying this overrides datadir, experiments, and batch_size.
+Negates the need to construct a DataLoader from datadir.</p>
+</dd>
+<dt>experiments: list[str] | None, default=None</dt><dd><p>Specify which experiments to take data from for the DataLoader, if constructing one.</p>
+</dd>
+<dt>prediction_timestep: int, default=1</dt><dd><p>Length of the interval over which the deep attention network was trained to predict cell displacement over.</p>
+</dd>
+<dt>point_size: float, default=1</dt><dd><p>Size of points in the ARHM. Passed to s in seaborn.scatterplot().</p>
+</dd>
+<dt>palette: str, default=’seismic_r’</dt><dd><p>Specify which matplotlib colour palette to use.</p>
+</dd>
+<dt>colorbar_ndp: int | None, default=None</dt><dd><p>Number of decimal places to round colour bar labels to.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="model_evaluation_utils-checkpoint.plot_alignment_heatmap">
+<span class="sig-prename descclassname"><span class="pre">model_evaluation_utils-checkpoint.</span></span><span class="sig-name descname"><span class="pre">plot_alignment_heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datadir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.utils.data.DataLoader</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">palette</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'seismic_r'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_ndp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_evaluation_utils-checkpoint.plot_alignment_heatmap" title="Link to this definition"></a></dt>
+<dd><p>Plots an alignment heatmap for a given trained deep attention network and dataloader. Designed to
+be called with an active matplotlib.pyplot.figure.</p>
+<section id="id10">
+<h3>Parameters<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>model: model_definition_utils.velocity_predictor</dt><dd><p>Trained deep attention network, loaded in using load_model().</p>
+</dd>
+<dt>datadir: str, default=None</dt><dd><p>Directory containing input data. Should have subdirectories for each experiment.</p>
+</dd>
+<dt>batch_size: int, default=20000</dt><dd><p>How many individual focal &amp; neighbour cell plots to superimpose.</p>
+</dd>
+<dt>dataloader: torch.utils.data.DataLoader | None, default=None</dt><dd><p>DataLoader to draw data from for plotting. Specifying this overrides datadir, experiments, and batch_size.
+Negates the need to construct a DataLoader from datadir.</p>
+</dd>
+<dt>experiments: list[str] | None, default=None</dt><dd><p>Specify which experiments to take data from for the dataset, if loading in a dataset from datadir.</p>
+</dd>
+<dt>point_size: float, default=1</dt><dd><p>Size of points in the ARHM. Passed to s in seaborn.scatterplot().</p>
+</dd>
+<dt>palette: str, default=’seismic_r’</dt><dd><p>Specify which matplotlib colour palette to use.</p>
+</dd>
+<dt>colorbar_ndp: int | None, default=None</dt><dd><p>Number of decimal places to round colour bar labels to.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="model_evaluation_utils-checkpoint.weight_distance_plot">
+<span class="sig-prename descclassname"><span class="pre">model_evaluation_utils-checkpoint.</span></span><span class="sig-name descname"><span class="pre">weight_distance_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataloader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.utils.data.DataLoader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_averages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avg_xlim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_bins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attraction_scores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_timestep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_evaluation_utils-checkpoint.weight_distance_plot" title="Link to this definition"></a></dt>
+<dd><p>Plots normalised weight vs distance for one batch of a given DataLoader. Designed to
+be called with an active matplotlib.pyplot.figure.</p>
+<section id="id11">
+<h3>Parameters<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>model: model_definition_utils.velocity_predictor</dt><dd><p>Trained deep attention network, loaded in using load_model().</p>
+</dd>
+<dt>dataloader: torch.data.DataLoader</dt><dd><p>Cell trajectory DataLoader.</p>
+</dd>
+<dt>plot_averages: bool, default=True</dt><dd><p>If True, will plot average weight against distance from neighbour cells.</p>
+</dd>
+<dt>avg_xlim: tuple[float,float] | None, default=None</dt><dd><p>Specify distance limits to plot average weight between.</p>
+</dd>
+<dt>n_bins: int, default=100</dt><dd><p>Number of points to plot average weight at.</p>
+</dd>
+<dt>attraction_scores: bool, default=False</dt><dd><p>If True, colour points by attraction score.</p>
+</dd>
+<dt>point_size: float, default=0.1</dt><dd><p>Size of points. Passed to s in seaborn.scatterplot.</p>
+</dd>
+<dt>prediction_timestep: int, default=1</dt><dd><p>Timestep over which the deep attention network is trained to predict over.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="model_evaluation_utils-checkpoint.radial_weight_plot">
+<span class="sig-prename descclassname"><span class="pre">model_evaluation_utils-checkpoint.</span></span><span class="sig-name descname"><span class="pre">radial_weight_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rlim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_meshsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta_meshsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_evaluation_utils-checkpoint.radial_weight_plot" title="Link to this definition"></a></dt>
+<dd><p>Plots radially averaged weight vs distance for the weight function of a deep atttention network.
+Designed to be called with an active matplotlib.pyplot.figure.</p>
+<section id="id12">
+<h3>Parameters<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>model: model_definition_utils.velocity_predictor</dt><dd><p>Trained deep attention network, loaded in using load_model().</p>
+</dd>
+<dt>rlim: tuple[float,float]</dt><dd><p>Limits to compute average weight between.</p>
+</dd>
+<dt>r_meshsize: int, default=100</dt><dd><p>Number of points to compute average weight at.</p>
+</dd>
+<dt>theta_meshsize: int, default=100</dt><dd><p>Number of angles to use when computing average weight.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../model_definition_utils-checkpoint/index.html" class="btn btn-neutral float-left" title="model_definition_utils-checkpoint" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../cell_trajectory_data_utils-checkpoint/index.html" class="btn btn-neutral float-right" title="cell_trajectory_data_utils-checkpoint" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, James Boyle.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

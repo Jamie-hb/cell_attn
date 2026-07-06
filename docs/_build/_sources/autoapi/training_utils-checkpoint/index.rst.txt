@@ -1,0 +1,72 @@
+training_utils-checkpoint
+=========================
+
+.. py:module:: training_utils-checkpoint
+
+.. autoapi-nested-parse::
+
+   Train and test functions for attention networks 
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   training_utils-checkpoint.train_loop
+   training_utils-checkpoint.test_loop
+
+
+Module Contents
+---------------
+
+.. py:function:: train_loop(model, training_dataloader, test_dataloader, num_epochs, burn_in, patience, loss_fn, learning_rate, min_learning_rate, stloc, device=torch.device('cuda' if torch.cuda.is_available() else 'cpu'))
+
+   Training loop. Called on by train_model.train_deep_attention_network().
+
+   Parameters
+   --------------
+   model: model_definition_utils.velocity_predictor
+       Deep attention network model.
+   training_dataloader: torch.utils.data.DataLoader
+       DataLoader containing data to train on.
+   validation_dataloader: torch.utils.data.DataLoader
+       DataLoader containing data to validate on.
+   num_epochs: int
+       Maximum number of epochs to train for. 
+   burn_in: int
+       Number of epochs to wait before beginning counting for early stopping.
+   patience: int
+       Number of epochs to allow a lack of improvement for before terminating training. 
+       To disable early stopping set this equal to num_epochs.
+   loss_fn: 
+       Loss function to use for training.
+   learning_rate: float
+       Initial learning rate.
+   min_learning_rate: float
+       Minimum learning rate to anneal to.
+   stloc: str
+       Directory to store trained model and training metrics in.
+   device: torch.device
+       Device that model and DataLoader live on.
+
+
+
+.. py:function:: test_loop(model, dataloader, loss_fn, device=torch.device('cuda' if torch.cuda.is_available() else 'cpu'))
+
+   Test loop. Called on by train_model.train_deep_attention_network().
+
+   Parameters
+   --------------
+   model: model_definition_utils.velocity_predictor
+       Deep attention network model.
+   dataloader: torch.utils.data.DataLoader
+       DataLoader containing data to validate on.
+   loss_fn: 
+       Loss function to use for training.
+   device: torch.device
+       Device that model and DataLoader live on.
+
+
+

@@ -1,0 +1,60 @@
+cell_attn.train_model
+=====================
+
+.. py:module:: cell_attn.train_model
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   cell_attn.train_model.train_deep_attention_network
+
+
+Module Contents
+---------------
+
+.. py:function:: train_deep_attention_network(datadir: str, stdir: str, training_subdirs: list[str] | None = None, validation_subdirs: list[str] | None = None, training_speed: str = 'auto', batch_size: int | None = None, num_epochs: int | None = None, patience: int | None = None, burn_in: int | None = None, learning_rate: list[float] = [0.001, 1e-05])
+
+   Trains a deep attention network on a cell trajectory data set. 
+
+   Parameters
+   --------------
+   datadir: str
+       Directory containing the input and label data. Should contain sub-directories named "training_data" 
+       and "validation_data", within each are directories containing the input and label data for each experiment.
+   stdir: str
+       Directory to store trained model and training metrics in. Model state_dict will be stored at stdir/model.pth.
+   training_subdirs: list[str] | None, default=None
+       Specify to use only certain experiments for training data. Each entry must be a subdirectory in datadir/training_data/. 
+   validation_subdirs: list[str] | None, default=None
+       Specify to use only certain experiments for validation data. Each entry must be a subdirectory in datadir/validation_data/.
+   training_speed: str, default='auto':
+       Specify what training behaviour to use. Must be one of 'auto', 'short' or 'long'.
+       'auto' sets the number of epochs to the equivalent of 750000 batches of batch size 500. Empirically this is always enough
+       to reach a near minimal loss. 'short' and 'long' reduce/increase the number of epochs, patience and burn-in respectively.
+       If all of batch_size, num_epochs, patience and burn_in are given, they will override the training_speed argument.
+       If some but not all of these are given, then the behaviour specified by training_speed will take precedence.
+   batch_size: int | None, default=None
+       Batch size to use for training.
+       If batch_size, num_epochs, patience and burn_in are given, this will override the training_speed argument.
+       If some but not all of these are given, then the behaviour specified by training_speed will take precedence.
+   num_epochs: int | None, default=None
+       Maximum number of epochs to train for.
+       If batch_size, num_epochs, patience and burn_in are given, this will override the training_speed argument.
+       If some but not all of these are given, then the behaviour specified by training_speed will take precedence.
+   patience: int | None, default=None
+       Number of epochs to allow a lack of improvement for before terminating training. 
+       To disable early stopping set this equal to num_epochs.
+       If batch_size, num_epochs, patience and burn_in are given, this will override the training_speed argument.
+       If some but not all of these are given, then the behaviour specified by training_speed will take precedence.
+   burn_in: int | None, default=None
+       Number of epochs to wait before beginning counting for early stopping.
+       If batch_size, patience, patience and burn_in are given, this will override the training_speed argument.
+       If some but not all of these are given, then the behaviour specified by training_speed will take precedence.
+   learning_rate: list[float], default=[0.001, 0.00001]
+       Maximum and minimum learning rate to anneal between.
+       
+
+

@@ -1,0 +1,111 @@
+cell_trajectory_data_utils-checkpoint
+=====================================
+
+.. py:module:: cell_trajectory_data_utils-checkpoint
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   cell_trajectory_data_utils-checkpoint.cellTrajectoriesDataset
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   cell_trajectory_data_utils-checkpoint.create_data_from_trajectories
+   cell_trajectory_data_utils-checkpoint.create_data_from_trajectories_vanilla
+   cell_trajectory_data_utils-checkpoint.create_data_from_trajectories_memory_saver
+
+
+Module Contents
+---------------
+
+.. py:function:: create_data_from_trajectories(X: numpy.ndarray, nn: int, timestep: int, stdir: str, t_min: int = 0, t_max: int | None = None, memory_saver: bool = False)
+
+   Takes in cell trajectory data in the form of a trajectory matrix, and creates input and label data ready to
+   be trained on by a deep attention network.
+
+   Parameters
+   --------------
+   X: numpy.ndarray 
+       Cell trajectory data matrix (dimension 2 x n_cells x n_timepoints), where X[0,i,t] = x co-ordinate of cell i at time t, and X[1,i,t] = y co-ordinate of cell i at time t.
+   nn: int 
+       Number of nearest neighbours.
+   timestep: int
+       Time interval to predict focal cell movement over, measured in indices of the trajectory data matrix.
+   stdir: str
+       Directory to store input and label data in.
+   t_min: int | None, default=0
+       Lower limit of time window of trajectory data to use. If given will filter X down to X[:,:,t_min:] before other computations. 
+   t_max: int | None, default=None
+       Upper limit of time window of trajectory data to use. If given will filter X down to X[:,:,:t_max] before other computations. 
+   memory_saver: bool, default=False
+       If memory_saver=True, then a more memory efficient (but slower) algorithm will be used. Note this will only use a significantly 
+       lower amount of memory if the trajectory data matrix contains a significant amount of missing data. 
+
+   Creates the following files in stdir:
+   --------------
+   input_data.npy: numpy.ndarray
+       Dimension (n_datapoints x n_nbhs x 12) numpy array. input_data[i] is a 2d numpy array with rows corresponding 
+       to the nearest neighbour cells of a focal cell, and the columns are (with {num columns})
+           nbh_cell_displacement_x _y {2}, focal_cell_velocity_x _y {2}, nbh_cell_velocity_x _y {2},
+           nbh_cell_displacement_x _y (fcc) {2}.
+       fcc (focal cell coordinates) indicates that the vector is given in coordinates where the y-axis aligns
+       with the focal cell's velocity.
+   labels.npy: numpy.ndarray:
+       Dimension (n_datapoints x 2) numpy array, where row i is the next displacement of the focal cell for input_data[i], measured over the given timestep. 
+
+
+
+.. py:function:: create_data_from_trajectories_vanilla(X: numpy.ndarray, nn: int, timestep: int, stdir: str)
+
+   Default function to turn a cell trajectory adata matrix into input and label data. Called upon by create_data_from_trajectories(). 
+
+
+.. py:function:: create_data_from_trajectories_memory_saver(X: numpy.ndarray, nn: int, timestep: int, stdir: str)
+
+   Alternative function to turn a trajectory matrix into input and label data when the matrix is large and contains
+   a large amount of missing data. Called upon by create_data_from_trajectories(). 
+
+
+.. py:class:: cellTrajectoriesDataset(directory, experiments=None, nsamples_per_run=None, device=torch.device('cuda' if torch.cuda.is_available() else 'cpu'))
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   Dataset class for cell trajectory data. 
+
+   Parameters
+   --------------    
+   directory: str 
+       Directory where input and label data is stored, within this directory should be a set of subdirectories, one for each experiment, each containing
+       a input data file called input_data.npy, and label files called labels.npy, as created by create_data_from_trajectories().
+   experiments: list[str] | None, default=None
+       Specify which experiments to take data from for the dataset. Each element of the list should be the name of a subdirectory of directory.
+   nsamples_per_run: int | None, default=None
+       Only include a fixed number of data points per experiment (chosen uniformly at random).
+   device: torch.device, default=torch.device('cuda' if torch.cuda.is_available() else 'cpu') 
+       What device to put the dataset on. 
+
+
+
+   .. py:attribute:: trajectories
+
+
+   .. py:attribute:: labels
+
+
+   .. py:attribute:: device
+
+
+   .. py:method:: __len__()
+
+
+   .. py:method:: __getitem__(i)
+
+

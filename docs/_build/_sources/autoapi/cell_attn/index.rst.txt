@@ -1,0 +1,377 @@
+cell_attn
+=========
+
+.. py:module:: cell_attn
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/cell_attn/cell_trajectory_data_utils/index
+   /autoapi/cell_attn/model_definition_utils/index
+   /autoapi/cell_attn/model_evaluation_utils/index
+   /autoapi/cell_attn/train_model/index
+   /autoapi/cell_attn/training_utils/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   cell_attn.__version__
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   cell_attn.cellTrajectoriesDataset
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   cell_attn.create_data_from_trajectories
+   cell_attn.train_deep_attention_network
+   cell_attn.plot_attention_heatmap
+   cell_attn.plot_attraction_repulsion_heatmap
+   cell_attn.plot_alignment_heatmap
+   cell_attn.load_model
+   cell_attn.load_data
+   cell_attn.plot_losses
+   cell_attn.plot_losses_per_epoch
+   cell_attn.weight_distance_plot
+   cell_attn.radial_weight_plot
+
+
+Package Contents
+----------------
+
+.. py:data:: __version__
+   :value: '0.1.0'
+
+
+.. py:function:: create_data_from_trajectories(X: numpy.ndarray, nn: int, timestep: int, stdir: str, t_min: int = 0, t_max: int | None = None, memory_saver: bool = False)
+
+   Takes in cell trajectory data in the form of a trajectory matrix, and creates input and label data ready to
+   be trained on by a deep attention network.
+
+   Parameters
+   --------------
+   X: numpy.ndarray 
+       Cell trajectory data matrix (dimension 2 x n_cells x n_timepoints), where X[0,i,t] = x co-ordinate of cell i at time t, and X[1,i,t] = y co-ordinate of cell i at time t.
+   nn: int 
+       Number of nearest neighbours.
+   timestep: int
+       Time interval to predict focal cell movement over, measured in indices of the trajectory data matrix.
+   stdir: str
+       Directory to store input and label data in.
+   t_min: int | None, default=0
+       Lower limit of time window of trajectory data to use. If given will filter X down to X[:,:,t_min:] before other computations. 
+   t_max: int | None, default=None
+       Upper limit of time window of trajectory data to use. If given will filter X down to X[:,:,:t_max] before other computations. 
+   memory_saver: bool, default=False
+       If memory_saver=True, then a more memory efficient (but slower) algorithm will be used. Note this will only use a significantly 
+       lower amount of memory if the trajectory data matrix contains a significant amount of missing data. 
+
+   Creates the following files in stdir:
+   --------------
+   input_data.npy: numpy.ndarray
+       Dimension (n_datapoints x n_nbhs x 12) numpy array. input_data[i] is a 2d numpy array with rows corresponding 
+       to the nearest neighbour cells of a focal cell, and the columns are (with {num columns})
+           nbh_cell_displacement_x _y {2}, focal_cell_velocity_x _y {2}, nbh_cell_velocity_x _y {2},
+           nbh_cell_displacement_x _y (fcc) {2}.
+       fcc (focal cell coordinates) indicates that the vector is given in coordinates where the y-axis aligns
+       with the focal cell's velocity.
+   labels.npy: numpy.ndarray:
+       Dimension (n_datapoints x 2) numpy array, where row i is the next displacement of the focal cell for input_data[i], measured over the given timestep. 
+
+
+
+.. py:class:: cellTrajectoriesDataset(directory, experiments=None, nsamples_per_run=None, device=torch.device('cuda' if torch.cuda.is_available() else 'cpu'))
+
+   Bases: :py:obj:`torch.utils.data.Dataset`
+
+
+   Dataset class for cell trajectory data. 
+
+   Parameters
+   --------------    
+   directory: str 
+       Directory where input and label data is stored, within this directory should be a set of subdirectories, one for each experiment, each containing
+       a input data file called input_data.npy, and label files called labels.npy, as created by create_data_from_trajectories().
+   experiments: list[str] | None, default=None
+       Specify which experiments to take data from for the dataset. Each element of the list should be the name of a subdirectory of directory.
+   nsamples_per_run: int | None, default=None
+       Only include a fixed number of data points per experiment (chosen uniformly at random).
+   device: torch.device, default=torch.device('cuda' if torch.cuda.is_available() else 'cpu') 
+       What device to put the dataset on. 
+
+
+
+   .. py:attribute:: trajectories
+
+
+   .. py:attribute:: labels
+
+
+   .. py:attribute:: device
+
+
+   .. py:method:: __len__()
+
+
+   .. py:method:: __getitem__(i)
+
+
+.. py:function:: train_deep_attention_network(datadir: str, stdir: str, training_subdirs: list[str] | None = None, validation_subdirs: list[str] | None = None, training_speed: str = 'auto', batch_size: int | None = None, num_epochs: int | None = None, patience: int | None = None, burn_in: int | None = None, learning_rate: list[float] = [0.001, 1e-05])
+
+   Trains a deep attention network on a cell trajectory data set. 
+
+   Parameters
+   --------------
+   datadir: str
+       Directory containing the input and label data. Should contain sub-directories named "training_data" 
+       and "validation_data", within each are directories containing the input and label data for each experiment.
+   stdir: str
+       Directory to store trained model and training metrics in. Model state_dict will be stored at stdir/model.pth.
+   training_subdirs: list[str] | None, default=None
+       Specify to use only certain experiments for training data. Each entry must be a subdirectory in datadir/training_data/. 
+   validation_subdirs: list[str] | None, default=None
+       Specify to use only certain experiments for validation data. Each entry must be a subdirectory in datadir/validation_data/.
+   training_speed: str, default='auto':
+       Specify what training behaviour to use. Must be one of 'auto', 'short' or 'long'.
+       'auto' sets the number of epochs to the equivalent of 750000 batches of batch size 500. Empirically this is always enough
+       to reach a near minimal loss. 'short' and 'long' reduce/increase the number of epochs, patience and burn-in respectively.
+       If all of batch_size, num_epochs, patience and burn_in are given, they will override the training_speed argument.
+       If some but not all of these are given, then the behaviour specified by training_speed will take precedence.
+   batch_size: int | None, default=None
+       Batch size to use for training.
+       If batch_size, num_epochs, patience and burn_in are given, this will override the training_speed argument.
+       If some but not all of these are given, then the behaviour specified by training_speed will take precedence.
+   num_epochs: int | None, default=None
+       Maximum number of epochs to train for.
+       If batch_size, num_epochs, patience and burn_in are given, this will override the training_speed argument.
+       If some but not all of these are given, then the behaviour specified by training_speed will take precedence.
+   patience: int | None, default=None
+       Number of epochs to allow a lack of improvement for before terminating training. 
+       To disable early stopping set this equal to num_epochs.
+       If batch_size, num_epochs, patience and burn_in are given, this will override the training_speed argument.
+       If some but not all of these are given, then the behaviour specified by training_speed will take precedence.
+   burn_in: int | None, default=None
+       Number of epochs to wait before beginning counting for early stopping.
+       If batch_size, patience, patience and burn_in are given, this will override the training_speed argument.
+       If some but not all of these are given, then the behaviour specified by training_speed will take precedence.
+   learning_rate: list[float], default=[0.001, 0.00001]
+       Maximum and minimum learning rate to anneal between.
+       
+
+
+.. py:function:: plot_attention_heatmap(model, datadir: str | None = None, batch_size: int = 20000, dataloader: torch.utils.data.DataLoader | None = None, experiments: list[str] | None = None, point_size: float = 1, min_weight: float | None = None, max_weight: float | None = None, palette: str = 'gnuplot', colorbar_ndp: int | None = None)
+
+   Plots an attention heatmap for a given trained deep attention network and DataLoader. Designed to
+   be called with an active matplotlib.pyplot.figure.
+
+   Parameters
+   --------------
+   model: model_definition_utils.velocity_predictor
+       Trained deep attention network, loaded in using load_model().
+   datadir: str, default=None 
+       Directory containing input data. Should have subdirectories for each experiment.
+   batch_size: int, default=20000 
+       How many individual focal & neighbour cell plots to superimpose.
+   dataloader: torch.utils.data.DataLoader | None, default=None
+       Dataloader to draw data from for plotting. Specifying this overrides datadir, experiments, and batch_size. 
+       Negates the need to construct a DataLoader from datadir.
+   experiments: list[str] | None, default=None
+       If constructing a DataLoader, specify which experiments to take data from.
+   point_size: float, default=1
+       Size of points in the AHM. Passed to s in seaborn.scatterplot().
+   min_weight: float | None, default=None
+       Specify the lower weight to normalise the colour palette to. If None, will bet set to the 1st percentile of the
+       computed weights.
+   max_weight: float | None, default=None
+       Specify the upper weight to normalise the colour palette to. If None, will be set to the 99th percentile of the
+       computed weights.
+   palette: str, default='gnuplot' 
+       Specify which matplotlib colour palette to use. 
+   colorbar_ndp: int | None, default=None
+       Number of decimal places to round color bar labels to. 
+       
+
+
+.. py:function:: plot_attraction_repulsion_heatmap(model, datadir: str | None = None, batch_size: int = 20000, dataloader: torch.utils.data.DataLoader | None = None, experiments: list[str] | None = None, prediction_timestep: int = 1, point_size: float = 1, palette: str = 'seismic_r', colorbar_ndp: int = None)
+
+   Plots an attraction-repulsion heatmap for a given trained deep attention network and DataLoader. Designed to
+   be called with an active matplotlib.pyplot.figure.
+
+   Parameters
+   --------------
+   model: model_definition_utils.velocity_predictor
+       Trained deep attention network, loaded in using load_model().
+   datadir: str, default=None 
+       Directory containing input data. Should have subdirectories for each experiment.
+   batch_size: int, default=20000 
+       How many individual focal & neighbour cell plots to superimpose.
+   dataloader: torch.utils.data.DataLoader | None, default=None
+       DataLoader to draw data from for plotting. Specifying this overrides datadir, experiments, and batch_size. 
+       Negates the need to construct a DataLoader from datadir.
+   experiments: list[str] | None, default=None
+       Specify which experiments to take data from for the DataLoader, if constructing one.
+   prediction_timestep: int, default=1
+       Length of the interval over which the deep attention network was trained to predict cell displacement over.
+   point_size: float, default=1
+       Size of points in the ARHM. Passed to s in seaborn.scatterplot().
+   palette: str, default='seismic_r'
+       Specify which matplotlib colour palette to use.
+   colorbar_ndp: int | None, default=None
+       Number of decimal places to round colour bar labels to. 
+       
+
+
+.. py:function:: plot_alignment_heatmap(model, datadir: str | None = None, batch_size: int = 20000, dataloader: torch.utils.data.DataLoader | None = None, experiments: list[str] | None = None, point_size: float = 1, palette: str = 'seismic_r', colorbar_ndp: int | None = None)
+
+   Plots an alignment heatmap for a given trained deep attention network and dataloader. Designed to
+   be called with an active matplotlib.pyplot.figure.
+
+   Parameters
+   --------------
+   model: model_definition_utils.velocity_predictor
+       Trained deep attention network, loaded in using load_model().
+   datadir: str, default=None 
+       Directory containing input data. Should have subdirectories for each experiment.
+   batch_size: int, default=20000 
+       How many individual focal & neighbour cell plots to superimpose.
+   dataloader: torch.utils.data.DataLoader | None, default=None
+       DataLoader to draw data from for plotting. Specifying this overrides datadir, experiments, and batch_size. 
+       Negates the need to construct a DataLoader from datadir.
+   experiments: list[str] | None, default=None
+       Specify which experiments to take data from for the dataset, if loading in a dataset from datadir.
+   point_size: float, default=1
+       Size of points in the ARHM. Passed to s in seaborn.scatterplot().
+   palette: str, default='seismic_r'
+       Specify which matplotlib colour palette to use. 
+   colorbar_ndp: int | None, default=None
+       Number of decimal places to round colour bar labels to. 
+       
+
+
+.. py:function:: load_model(stdir: str)
+
+   Load a deep attention network model.
+
+   Parameters
+   --------------
+   stdir: str
+       Directory where the deep attention network is stored, state_dict should be stored at stdir/model.pth.
+       
+   Returns
+   --------------
+   model: model_definition_utils.velocity_predictor
+       Deep attention network model.
+
+
+
+.. py:function:: load_data(datadir: str, experiments: list[str] | None = None, batch_size: int = 20000)
+
+   Loads trajectory input and label data in the form of a DataLoader.
+
+   Parameters 
+   --------------
+   datadir: str
+       Directory where input and label data are stored, within this directory should be a set of subdirectories, 
+       one for each experiment, each containing a input data file called input_data.npy, and label files 
+       called labels.npy, as created by create_data_from_trajectories().
+   experiments: list[str] | None, default=None
+       Specify which experiments to take data from for the dataset.
+   batch_size: int, default=20000
+       Batch size of the DataLoader.
+       
+   Returns
+   --------------
+   dataloader: torch.utils.data.DataLoader
+       DataLoader for trajectory data.
+       
+
+
+.. py:function:: plot_losses(stdir: str, w: float = 0.01)
+
+   Plot the test and training loss from the training process of a model. Designed to
+   be called with an active matplotlib.pyplot.figure.
+
+   Parameters
+   --------------
+   stdir: str
+       Directory where the model (and thus loss files) are stored.
+   w: float, default=0.01
+       Parameter controlling the degree of smoothing in the plots. A 
+       lower w leads to a smoother average. See ewma() for details. 
+       
+
+
+.. py:function:: plot_losses_per_epoch(stdir: str, w: float = 0.01)
+
+   Plots the test loss after each epoch. Designed to
+   be called with an active matplotlib.pyplot.figure.
+
+   Parameters
+   --------------
+   stdir: str
+       Directory where the model (and thus loss files) are stored.
+   w: float, default=0.01
+       Parameter controlling the degree of smoothing in the plots. A 
+       lower w leads to a smoother average. See ewma() for details. 
+       
+
+
+.. py:function:: weight_distance_plot(model, dataloader: torch.utils.data.DataLoader, plot_averages: bool = True, avg_xlim: tuple[float, float] = None, n_bins: int = 100, attraction_scores: bool = False, point_size: float = 0.1, prediction_timestep: int = 1)
+
+   Plots normalised weight vs distance for one batch of a given DataLoader. Designed to
+   be called with an active matplotlib.pyplot.figure.
+
+   Parameters
+   --------------
+   model: model_definition_utils.velocity_predictor
+       Trained deep attention network, loaded in using load_model().
+   dataloader: torch.data.DataLoader
+       Cell trajectory DataLoader.
+   plot_averages: bool, default=True
+       If True, will plot average weight against distance from neighbour cells.
+   avg_xlim: tuple[float,float] | None, default=None
+       Specify distance limits to plot average weight between.
+   n_bins: int, default=100
+       Number of points to plot average weight at. 
+   attraction_scores: bool, default=False
+       If True, colour points by attraction score.
+   point_size: float, default=0.1
+       Size of points. Passed to s in seaborn.scatterplot. 
+   prediction_timestep: int, default=1
+       Timestep over which the deep attention network is trained to predict over.
+       
+
+
+.. py:function:: radial_weight_plot(model, rlim: tuple[float, float], r_meshsize: int = 100, theta_meshsize: int = 100)
+
+   Plots radially averaged weight vs distance for the weight function of a deep atttention network.
+   Designed to be called with an active matplotlib.pyplot.figure.
+
+   Parameters
+   --------------
+   model: model_definition_utils.velocity_predictor
+       Trained deep attention network, loaded in using load_model().
+   rlim: tuple[float,float]
+       Limits to compute average weight between.
+   r_meshsize: int, default=100
+       Number of points to compute average weight at.
+   theta_meshsize: int, default=100 
+       Number of angles to use when computing average weight.
+       
+
+

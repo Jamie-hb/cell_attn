@@ -1,0 +1,27 @@
+[build-system]
+requires = ['hatchling >= 1.26']
+build-backend = 'hatchling.build'
+
+[project]
+name = "cell_attn"
+version = "0.1.0"
+authors = [
+    {name="James Boyle"},
+]
+description = "A package for using deep attention networks to analyse cell movement data."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+	'numpy>=1.26.2',
+	'matplotlib>=3.9.2',
+	'seaborn>=0.13.2',
+	'pandas>=2.2.2',
+	'scipy>=1.15.1',
+    'torch>=2.5.0'
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]

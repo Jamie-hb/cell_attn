@@ -1,0 +1,96 @@
+cell_attn.model_definition_utils
+================================
+
+.. py:module:: cell_attn.model_definition_utils
+
+.. autoapi-nested-parse::
+
+   Model definitions for Cell Movement Attention Networks 
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   cell_attn.model_definition_utils.velocity_predictor
+   cell_attn.model_definition_utils.pairwise_function_velocity
+   cell_attn.model_definition_utils.weight_function
+
+
+Module Contents
+---------------
+
+.. py:class:: velocity_predictor
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   End to end function for predicting the next displacement of a focal cell. 
+
+
+   .. py:attribute:: interaction_network
+
+
+   .. py:attribute:: weight_network
+
+
+   .. py:method:: forward(x)
+
+
+   .. py:method:: compute_weights(x)
+
+
+.. py:class:: pairwise_function_velocity
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Pairwise interaction function definition.
+
+   Input: focal cell velocity (2d), nbh cell relative position (2d) and velocity (2d). 
+
+
+
+   .. py:attribute:: fc0
+
+
+   .. py:attribute:: fc1
+
+
+   .. py:attribute:: fc2
+
+
+   .. py:attribute:: fc3
+
+
+   .. py:method:: forward(x)
+
+
+.. py:class:: weight_function
+
+   Bases: :py:obj:`torch.nn.Module`
+
+
+   Weight function definition.
+
+   Input: nbh cell relative position (2d). 
+
+
+
+   .. py:attribute:: fc0
+
+
+   .. py:attribute:: fc1
+
+
+   .. py:attribute:: fc2
+
+
+   .. py:attribute:: fc3
+
+
+   .. py:method:: forward(x)
+
+
