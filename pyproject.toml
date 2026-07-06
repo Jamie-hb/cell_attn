@@ -25,3 +25,6 @@ classifiers = [
 ]
 license = "MIT"
 license-files = ["LICEN[CS]E*"]
+
+[project.urls]
+Homepage = "https://github.com/Jamie-hb/cell_attn"
