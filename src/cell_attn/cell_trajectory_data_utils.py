@@ -52,7 +52,7 @@ def create_data_from_trajectories(X: np.ndarray, nn: int, timestep: int, stdir: 
             Dimension (n_datapoints x 2) numpy array, where row i is the next displacement of the focal cell for input_data[i], measured over the given timestep. 
         
         """
-
+    
     if not os.path.isdir(stdir):
         print('Specified storage directory does not exist. Attempting to create storage directory.')
         os.makedirs(stdir, exist_ok=True)
@@ -61,7 +61,7 @@ def create_data_from_trajectories(X: np.ndarray, nn: int, timestep: int, stdir: 
     pd.DataFrame({'parameter':['n_cells', 'n_its', 'nn', 'timestep', 't_min', 't_max', 'memory_saver', 'date'],
                   'value': [X.shape[1], X.shape[2], nn, timestep, t_min, t_max, memory_saver, '.'.join(str(datetime.now()).split('.')[:-1])]}).to_csv(
         os.path.join(stdir, 'input_data_parameters.csv'), index=False)
-
+    
     # Filter down to specified time range
     if t_max is None:
         t_max = X.shape[2] # if t_max is not given ensure default behaviour is to not impose an upper time limit
@@ -97,7 +97,7 @@ def create_data_from_trajectories_vanilla(X: np.ndarray, nn: int, timestep: int,
     velocities = np.zeros((n_datapoints, 2))
 
     rows_to_remove = [] # record rows with missing/degenerate data to remove at end
-    
+        
     for focal_cell in range(n_cells):
         for t in range(2, n_its - timestep):
             # determine 0th index of data to store info in 
@@ -111,6 +111,7 @@ def create_data_from_trajectories_vanilla(X: np.ndarray, nn: int, timestep: int,
             v = np.array([x[focal_cell,t] - x[focal_cell,t-1], y[focal_cell,t] - y[focal_cell,t-1]])
             if (v**2).sum()!=0:
                 v_unit = v / np.sqrt((v**2).sum())
+                
                 cob_matrix = np.linalg.inv(np.array([[v_unit[1], v_unit[0]],
                                                      [-v_unit[0],v_unit[1]]]))
                 
@@ -129,7 +130,6 @@ def create_data_from_trajectories_vanilla(X: np.ndarray, nn: int, timestep: int,
                     # Versions in focal cell co-ordinates
                     # nbh cell displacement 
                     data[row, k, 6:8] = np.matmul(cob_matrix, data[row, k, 0:2])
-    
                 # Compute velocity label
                 velocities[row,0] = x[focal_cell,t+timestep] - x[focal_cell,t]
                 velocities[row,1] = y[focal_cell,t+timestep] - y[focal_cell,t]

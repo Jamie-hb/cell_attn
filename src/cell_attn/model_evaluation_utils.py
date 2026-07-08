@@ -85,21 +85,22 @@ def plot_losses(stdir: str, w: float =0.01):
             lower w leads to a smoother average. See ewma() for details. 
             
         """
-
+        
     if not os.path.isdir(stdir):
         raise Exception('Given storage directory does not exist.')
         
     losses = pd.read_csv(os.path.join(stdir, 'losses.csv'))
-    
-    plt.plot([i for i in range(len(losses.train_loss))], losses.train_loss, alpha=0.1, color='blue')
+        
+    plt.plot([i for i in range(len(losses.train_loss))], losses.train_loss, alpha=0.1, color='blue')        
     plt.plot([i for i in range(len(losses.train_loss))], ewma(losses.train_loss, w), color='blue', label='Training Loss')
     
-    plt.plot([i for i in range(len(losses.test_loss))], losses.test_loss, alpha=0.1, color='red')
+    plt.plot([i for i in range(len(losses.test_loss))], losses.test_loss, alpha=0.1, color='red')        
     plt.plot([i for i in range(len(losses.test_loss))], ewma(losses.test_loss, w), color='red', label='Test Loss')
     
     plt.xlabel('Batch/100', fontsize=17.5)
+        
     plt.legend(fontsize='xx-large')
-
+    
 # -----------------------------------------------------------------------------
 
 def plot_losses_per_epoch(stdir: str, w: float =0.01):
