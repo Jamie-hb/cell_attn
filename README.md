@@ -8,16 +8,7 @@ Here we provide a brief tutorial on how to do this, using an example of publical
 
 ## Installation
 
-This package is installable via `pip` usinng the command `pip install cell_attn`. cell_attn has pytorch as a dependency, and you may wish to install this separately, see the [pytorch installation page](https://pytorch.org/get-started/locally/) for details
-
-Alternatively, you can download all the `.py` files in this repository and add them to a folder entitled `deep_attention_networks` within your working directory in - i.e. your directory structure should look like:
-
-- `deep_attention_networks`
-  - `cell_trajectory_data_utils.py`
-  - `model_definition_utils.py`
-  - `model_evaluation_utils.py`
-  - `train_model.py`
-  - `training_utils.py`
+This package is installable via `pip` usinng the command `pip install cell_attn`. cell_attn has pytorch as a dependency, and you may wish to install this separately, see the [pytorch installation page](https://pytorch.org/get-started/locally/) for details.
 
 ### Dependencies
 
