@@ -1,4 +1,4 @@
-<img src="images/MDCK_AHM.png" alt="markdown language" width="50" height="50">
+<img src="images/logo.png" alt="markdown language" width="80" height="80">
 
 # cell_attn
 
