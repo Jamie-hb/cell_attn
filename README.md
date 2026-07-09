@@ -1,3 +1,5 @@
+<img src="images/MDCK_AHM.png" alt="markdown language" width="50" height="50">
+
 # cell_attn
 
 Deep attention networks are an exploratory tool for inferring how cell-cell interactions affect cell movement from cell trajectory data. cell_attn provides the necessary functions to easily train a deep attention network on a cell trajectory data set, and use the trained DAN to infer how cell-cell interactions affect cell movement in the data set.
