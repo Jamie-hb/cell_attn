@@ -218,6 +218,6 @@ plt.show()
 
 ## 4) References
 
-[1]: BioRxiv pre-print
+[1]: Pre-print (coming soon!).
 
 [2]: J. LaChance, K. Suh, J. Clausen, D. J. Cohen. Learning the rules of collective cell migration using deep attention networks. PLoS computational biology (2022).
