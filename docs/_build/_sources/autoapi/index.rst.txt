@@ -7,5 +7,11 @@ This page contains auto-generated API reference documentation [#f1]_.
    :titlesonly:
 
    /autoapi/cell_attn/index
+   /autoapi/__init__-checkpoint/index
+   /autoapi/train_model-checkpoint/index
+   /autoapi/training_utils-checkpoint/index
+   /autoapi/model_definition_utils-checkpoint/index
+   /autoapi/model_evaluation_utils-checkpoint/index
+   /autoapi/cell_trajectory_data_utils-checkpoint/index
 
 .. [#f1] Created with `sphinx-autoapi <https://github.com/readthedocs/sphinx-autoapi>`_

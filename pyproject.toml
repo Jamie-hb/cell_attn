@@ -4,7 +4,7 @@ build-backend = 'hatchling.build'
 
 [project]
 name = "cell_attn"
-version = "0.1.2"
+version = "0.1.0"
 authors = [
     {name="James Boyle"},
 ]

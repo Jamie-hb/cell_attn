@@ -55,7 +55,7 @@ Package Contents
 ----------------
 
 .. py:data:: __version__
-   :value: '0.1.0'
+   :value: '0.1.2'
 
 
 .. py:function:: create_data_from_trajectories(X: numpy.ndarray, nn: int, timestep: int, stdir: str, t_min: int = 0, t_max: int | None = None, memory_saver: bool = False)

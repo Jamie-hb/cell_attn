@@ -1,4 +1,4 @@
-__version__ = "0.1.0"
+__version__ = "0.1.2"
 
 from cell_attn.cell_trajectory_data_utils import create_data_from_trajectories, cellTrajectoriesDataset
 from cell_attn.train_model import train_deep_attention_network

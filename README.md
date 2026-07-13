@@ -12,7 +12,7 @@ This package is installable via `pip` usinng the command `pip install cell_attn`
 
 ### Dependencies
 
-cell_attn has the following dependencies. cell_attn only uses standard aspects of these packages, so we expect that it should be compatible with similar versions. cell_attn runs using Python3, with the following additional packages:
+cell_attn has the following dependencies. cell_attn only uses standard aspects of these packages, so we expect that it should be compatible with similar versions.
 
 - `numpy >= 1.26.4`
 - `matplotlib >= 3.9.2`
@@ -100,7 +100,7 @@ Input and label data can be created from a trajectory matrix using the `create_d
 
 This function will then create the input and label data, and deposit them in `stdir` under the names `input_data.npy` and `labels.npy`. It will also create a file called `input_data_parameters.csv` recording the different parameters used to generate the data from the trajectory matrix.
 
-We recommend picking `nn` large enough such that a cell's $textrm{nn}^{th}$ nearest neighbour is far enough away that you would expect them not to interact significantly (in practice 10 is typically large enough), and `timestep` to be small (we usually take `timestep` = 1). 
+We recommend picking `nn` large enough such that a cell's $\textrm{nn}^{th}$ nearest neighbour is far enough away that you would expect them not to interact significantly, and `timestep` to be small (we usually take `timestep` = 1). 
 
 For the MDCK data, we use 10 nearest neighbours, with a prediction interval of 20 minutes (following [2]). The time resolution of the data is 10 minutes, so this corresponds to `timestep=2`. We can process the data using the code
 
