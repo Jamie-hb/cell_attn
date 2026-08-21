@@ -327,6 +327,10 @@ class cellTrajectoriesDataset(Dataset):
             a input data file called input_data.npy, and label files called labels.npy, as created by create_data_from_trajectories().
         experiments: list[str] | None, default=None
             Specify which experiments to take data from for the dataset. Each element of the list should be the name of a subdirectory of directory.
+        focal_type: int | None, default=None
+            Specify to only use focal cells of a given type.
+        n_types: int | None, default=None
+            Number of cell types in the data (only needed if specifying a focal cell type). 
         nsamples_per_run: int | None, default=None
             Only include a fixed number of data points per experiment (chosen uniformly at random).
         device: torch.device, default=torch.device('cuda' if torch.cuda.is_available() else 'cpu') 
@@ -334,7 +338,7 @@ class cellTrajectoriesDataset(Dataset):
         
         """
     
-    def __init__(self, directory, experiments=None, nsamples_per_run=None, device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')):
+    def __init__(self, directory, experiments=None, focal_type=None, n_types=None, nsamples_per_run=None, device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')):
 
         # Check directory, and if given subdirectories in experiments, exist. 
         if not os.path.isdir(directory):
@@ -366,6 +370,12 @@ class cellTrajectoriesDataset(Dataset):
         for subdirectory in subdirectories:
             x = np.load(os.path.join(directory, subdirectory, 'input_data.npy'))
             y = np.load(os.path.join(directory, subdirectory, 'labels.npy'))
+
+            # Filter down to desired cell type interactions
+            if not focal_type==None:
+                cell_types = np.where(x[:,:,8:8+n_types]==1)[2][np.array( [i*x.shape[1] for i in range(x.shape[0])] )]
+                x = x[cell_types==focal_type,:,:]
+                y = y[cell_types==focal_type,:]
             
             if not nsamples_per_run==None:
                 idx = rng.choice(range(x.shape[0]), nsamples_per_run, replace=False)
