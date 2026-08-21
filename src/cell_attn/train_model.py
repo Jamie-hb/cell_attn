@@ -13,7 +13,7 @@ from cell_attn.training_utils import train_loop
 def train_deep_attention_network(datadir: str, stdir: str, 
                                  training_subdirs: list[str] | None =None, validation_subdirs: list[str] | None =None, 
                                  training_speed: str ='auto', batch_size: int | None =None, num_epochs: int | None =None, patience: int | None =None, burn_in: int | None =None, 
-                                 learning_rate: list[float] =[0.001, 0.00001]):
+                                 learning_rate: list[float] =[0.001, 0.00001], type_aware: bool =False, n_types: int =2):
     """ Trains a deep attention network on a cell trajectory data set. 
 
         Parameters
@@ -52,6 +52,10 @@ def train_deep_attention_network(datadir: str, stdir: str,
             If some but not all of these are given, then the behaviour specified by training_speed will take precedence.
         learning_rate: list[float], default=[0.001, 0.00001]
             Maximum and minimum learning rate to anneal between.
+        type_aware: bool, default=False 
+            Specify whether to use a type aware deep attention network.
+        n_types: int, default=2 
+            If using a type aware deep attention network, specify how many cell types are present in the data.
             
         """
 
@@ -109,12 +113,16 @@ def train_deep_attention_network(datadir: str, stdir: str,
     
     # Store training details
     pd.DataFrame({'parameter':['stdir', 'datadir', 'training_subdirs', 'validation_subdirs',
-                               'batch_size', 'num_epochs', 'burn_in', 'patience', 'learning_rate'],
+                               'batch_size', 'num_epochs', 'burn_in', 'patience', 'learning_rate', 'type_aware', 'n_types'],
                   'value':[stdir, datadir, training_subdirs, validation_subdirs, batch_size, 
-                           num_epochs, burn_in, patience, learning_rate]}).to_csv(os.path.join(stdir, 'model_training_parameters.csv'), index=False)
+                           num_epochs, burn_in, patience, learning_rate, type_aware,
+                           n_types]}).to_csv(os.path.join(stdir, 'model_training_parameters.csv'), index=False)
     
     # Create deep attention network
-    model = model_definition_utils.__dict__['velocity_predictor']().to(device)
+    if type_aware:
+        model = model_definition_utils.__dict__['velocity_predictor_with_types'](n_types=n_types).to(device)
+    else:
+        model = model_definition_utils.__dict__['velocity_predictor']().to(device)
 
     # Train deep attention network
     train_loop(model=model, training_dataloader=training_dataloader, test_dataloader=validation_dataloader,
