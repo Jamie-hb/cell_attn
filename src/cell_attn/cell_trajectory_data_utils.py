@@ -17,7 +17,7 @@ from torch.utils.data import Dataset
 
 # ===== Data creation =====
 
-def create_data_from_trajectories(X: np.ndarray, nn: int, timestep: int, stdir: str, t_min: int =0, t_max: int | None =None, memory_saver: bool =False):
+def create_data_from_trajectories(X: np.ndarray, nn: int, timestep: int, stdir: str, t_min: int =0, t_max: int | None =None, cell_types: np.ndarray | None =None, memory_saver: bool =False):
     """ Takes in cell trajectory data in the form of a trajectory matrix, and creates input and label data ready to
         be trained on by a deep attention network.
 
@@ -34,7 +34,9 @@ def create_data_from_trajectories(X: np.ndarray, nn: int, timestep: int, stdir: 
         t_min: int | None, default=0
             Lower limit of time window of trajectory data to use. If given will filter X down to X[:,:,t_min:] before other computations. 
         t_max: int | None, default=None
-            Upper limit of time window of trajectory data to use. If given will filter X down to X[:,:,:t_max] before other computations. 
+            Upper limit of time window of trajectory data to use. If given will filter X down to X[:,:,:t_max] before other computations.
+        cell_types: numpy.ndarray | None, default=None
+            1D array of length n_cells specifying the type of each cell. If this is provided, the input data will include cell type information.
         memory_saver: bool, default=False
             If memory_saver=True, then a more memory efficient (but slower) algorithm will be used. Note this will only use a significantly 
             lower amount of memory if the trajectory data matrix contains a significant amount of missing data. 
@@ -45,35 +47,45 @@ def create_data_from_trajectories(X: np.ndarray, nn: int, timestep: int, stdir: 
             Dimension (n_datapoints x n_nbhs x 12) numpy array. input_data[i] is a 2d numpy array with rows corresponding 
             to the nearest neighbour cells of a focal cell, and the columns are (with {num columns})
                 nbh_cell_displacement_x _y {2}, focal_cell_velocity_x _y {2}, nbh_cell_velocity_x _y {2},
-                nbh_cell_displacement_x _y (fcc) {2}.
+                nbh_cell_displacement_x _y (fcc) {2}, focal_cell_type {num types}, nbh_cell_type {num types}.
             fcc (focal cell coordinates) indicates that the vector is given in coordinates where the y-axis aligns
             with the focal cell's velocity.
+            Cell types will be stored as one-hot encoded arrays (e.g. if there are 3 types (0,1,2), cell type 1 will be recorded as [0,1,0]).
         labels.npy: numpy.ndarray:
             Dimension (n_datapoints x 2) numpy array, where row i is the next displacement of the focal cell for input_data[i], measured over the given timestep. 
         
         """
+
+    # Check whether cell type information is being recorded
+    record_types = not cell_types is None
     
     if not os.path.isdir(stdir):
         print('Specified storage directory does not exist. Attempting to create storage directory.')
         os.makedirs(stdir, exist_ok=True)
 
     # Log data creation parameters
-    pd.DataFrame({'parameter':['n_cells', 'n_its', 'nn', 'timestep', 't_min', 't_max', 'memory_saver', 'date'],
-                  'value': [X.shape[1], X.shape[2], nn, timestep, t_min, t_max, memory_saver, '.'.join(str(datetime.now()).split('.')[:-1])]}).to_csv(
+    pd.DataFrame({'parameter':['n_cells', 'n_its', 'nn', 'timestep', 't_min', 't_max', 'cell_types', 'memory_saver', 'date'],
+                  'value': [X.shape[1], X.shape[2], nn, timestep, t_min, t_max, cell_types, memory_saver, '.'.join(str(datetime.now()).split('.')[:-1])]}).to_csv(
         os.path.join(stdir, 'input_data_parameters.csv'), index=False)
-    
+
+    # Filter down to only those cells whose type is known
+    if record_types:
+        n_types = len(np.unique(cell_types))
+        X = X[:,~np.isnan(cell_types),:]
+        cell_types= cell_types[~np.isnan(cell_types)]
+        
     # Filter down to specified time range
     if t_max is None:
         t_max = X.shape[2] # if t_max is not given ensure default behaviour is to not impose an upper time limit
     X = X[:,:,t_min:t_max]
 
     if memory_saver:
-        create_data_from_trajectories_memory_saver(X, nn, timestep, stdir)
+        create_data_from_trajectories_memory_saver(X, nn, timestep, stdir, cell_types)
     else:
-        create_data_from_trajectories_vanilla(X, nn, timestep, stdir)
+        create_data_from_trajectories_vanilla(X, nn, timestep, stdir, cell_types)
         
 
-def create_data_from_trajectories_vanilla(X: np.ndarray, nn: int, timestep: int, stdir: str):
+def create_data_from_trajectories_vanilla(X: np.ndarray, nn: int, timestep: int, stdir: str, cell_types: np.ndarray | None =None):
     """ Default function to turn a cell trajectory adata matrix into input and label data. Called upon by create_data_from_trajectories(). """
 
     # Strategy for dealing with missing data: As each "row" of the final data matrix is computed, we first check if the focal cell moves, and after computing the 
@@ -81,6 +93,9 @@ def create_data_from_trajectories_vanilla(X: np.ndarray, nn: int, timestep: int,
 
     if np.isnan(X).sum() > 0.20*X.size:
         warn('X contains a significant amount (' + str(100*np.isnan(X).sum()/X.size) + '%) of missing data, and thus this function maybe using substantially more memory than necessary. If you are experiencing memory capacity issues, consider passing memory_saver=True in create_data_from_trajectories().')
+
+    # Specify whether cell type information is being recorded
+    record_types = not cell_types is None
     
     x = X[0,:,:]
     y = X[1,:,:]
@@ -90,8 +105,9 @@ def create_data_from_trajectories_vanilla(X: np.ndarray, nn: int, timestep: int,
     # as we need focal cell velocity, and location timestep later
     n_valid_timepoints = n_its - 2 - timestep 
     n_datapoints = n_cells * n_valid_timepoints  
-    
-    data = np.zeros((n_datapoints, nn, 8)) # number of data points x num nbhs x num variables
+
+    n_types = len(np.unique(cell_types)) if record_types else 0
+    data = np.zeros((n_datapoints, nn, 8+2*n_types)) # number of data points x num nbhs x num variables
 
     # Objects to store labels
     velocities = np.zeros((n_datapoints, 2))
@@ -130,6 +146,12 @@ def create_data_from_trajectories_vanilla(X: np.ndarray, nn: int, timestep: int,
                     # Versions in focal cell co-ordinates
                     # nbh cell displacement 
                     data[row, k, 6:8] = np.matmul(cob_matrix, data[row, k, 0:2])
+
+                    # Focal and nbh cell type information, one-hot encoded
+                    if record_types:
+                        data[row, k, 8+cell_types[focal_cell]] = 1
+                        data[row, k, 8+n_types+cell_types[nbh_cell]] = 1
+                
                 # Compute velocity label
                 velocities[row,0] = x[focal_cell,t+timestep] - x[focal_cell,t]
                 velocities[row,1] = y[focal_cell,t+timestep] - y[focal_cell,t]
@@ -152,7 +174,7 @@ def create_data_from_trajectories_vanilla(X: np.ndarray, nn: int, timestep: int,
     print('done :)')
     
 
-def create_data_from_trajectories_memory_saver(X: np.ndarray, nn: int, timestep: int, stdir: str):
+def create_data_from_trajectories_memory_saver(X: np.ndarray, nn: int, timestep: int, stdir: str, cell_types: np.ndarray | None =None):
     """ Alternative function to turn a trajectory matrix into input and label data when the matrix is large and contains
         a large amount of missing data. Called upon by create_data_from_trajectories(). """
 
@@ -160,7 +182,15 @@ def create_data_from_trajectories_memory_saver(X: np.ndarray, nn: int, timestep:
     # cells), then only compute ML input matrix for these pairs. In this way, the ML data matrix is initialised at the size it ends up as, rather than initialised at the maximum 
     # possible size if there were no missing data then trimmed down later. This can use significantly less memory if the cell trajectory matrix contains a significant amount of 
     # missing data.
-    
+
+    # Check whether cell type information is being recorded
+    record_types = not cell_types is None
+
+    if record_types:
+        n_types = len(np.unique(cell_types))
+    else:
+        n_types = 0
+        
     n_cells = X.shape[1]
     n_datapoints = 0
 
@@ -226,7 +256,7 @@ def create_data_from_trajectories_memory_saver(X: np.ndarray, nn: int, timestep:
 
     # --- Create data matrix ---
     
-    data = np.zeros((n_datapoints, nn, 8))
+    data = np.zeros((n_datapoints, nn, 8+2*n_types))
     velocities = np.zeros((n_datapoints, 2))
     
     row = 0 # counter for which row to add data to
@@ -262,6 +292,11 @@ def create_data_from_trajectories_memory_saver(X: np.ndarray, nn: int, timestep:
                 # Versions in focal cell co-ordinates
                 # nbh cell displacement 
                 data[row, k, 6:8] = np.matmul(cob_matrix, data[row, k, 0:2])
+
+                # focal and nbh cell type information, one-hot encoded
+                if record_types:
+                    data[row, k, 8+int(cell_types[focal_cell])] = 1
+                    data[row, k, 8+n_types+int(cell_types[nearest_neighbours[k]])] = 1
 
             # Compute velocity label
             velocities[row,0] = focal_cell_data[0,3] - focal_cell_data[0,2]
