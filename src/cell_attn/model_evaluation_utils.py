@@ -308,7 +308,9 @@ def plot_weight_function(model, xlim: tuple[float,float], ylim: tuple[float,floa
 
     if (not focal_type is None) & (n_types is None):
         raise ValueError('If specifying a focal cell type, must also specify the number of cell types by passing to n_types.')
-        
+
+    type_aware = not focal_type is None 
+    
     x, y = torch.meshgrid(torch.linspace(xlim[0],xlim[1],501), torch.linspace(ylim[0],ylim[1],501), indexing='ij')
     x = x.flatten()
     y = y.flatten()
