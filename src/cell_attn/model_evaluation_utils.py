@@ -607,7 +607,7 @@ def plot_alignment_heatmap(model, datadir: str | None =None, batch_size: int =20
 
 def weight_distance_plot(model, dataloader: DataLoader, plot_averages: bool =True, avg_xlim: tuple[float,float] =None,
                          n_bins: int =100, attraction_scores: bool =False, point_size: float =0.1, 
-                         prediction_timestep: int =1):
+                         prediction_timestep: int =1, nbh_type: bool =None, n_types: int =2):
     """ Plots normalised weight vs distance for one batch of a given DataLoader. Designed to
         be called with an active matplotlib.pyplot.figure.
 
@@ -629,6 +629,10 @@ def weight_distance_plot(model, dataloader: DataLoader, plot_averages: bool =Tru
             Size of points. Passed to s in seaborn.scatterplot. 
         prediction_timestep: int, default=1
             Timestep over which the deep attention network is trained to predict over.
+        nbh_type: int, default=None
+            Only plot points corresponding to neighbour cells of a given type.
+        n_types: int, default=2
+            Number of cell types.
             
         """
         
@@ -636,6 +640,12 @@ def weight_distance_plot(model, dataloader: DataLoader, plot_averages: bool =Tru
     w = model.compute_weights(X).detach().numpy().flatten()
     d = torch.sqrt(X[:,:,0]**2 + X[:,:,1]**2).detach().numpy().flatten()
 
+    if not nbh_type is None:
+        nbh_types = np.where(X[:,:,8+n_types:8+2*n_types]==1)[2]
+        row_idx = (nbh_types==nbh_type)
+        w = w[row_idx]
+        d = d[row_idx]
+        
     if attraction_scores:
         nbh_cell_displacements = prediction_timestep * torch.reshape(X[:,:,[0,1]], (X.shape[0]*X.shape[1],2))
         
@@ -655,6 +665,9 @@ def weight_distance_plot(model, dataloader: DataLoader, plot_averages: bool =Tru
             predictions_all_cells[i*X.shape[1]:(i+1)*X.shape[1]] = predictions[i]
 
         del predictions
+
+        if not nbh_type is None:
+            nbh_cell_displacements = nbh_cell_displacements[row_idx,:]
 
         # Compute attraction scores
         predicted_proximities = ((predictions_all_cells - nbh_cell_displacements)**2).sum(axis=1).sqrt()
