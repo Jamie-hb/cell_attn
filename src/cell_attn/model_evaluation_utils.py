@@ -346,7 +346,8 @@ def plot_weight_function(model, xlim: tuple[float,float], ylim: tuple[float,floa
 # -----------------------------------------------------------------------------
 
 def plot_attraction_repulsion_heatmap(model, datadir: str | None =None, batch_size: int =20000, 
-                                      dataloader: DataLoader | None =None, experiments: list[str] | None =None, 
+                                      dataloader: DataLoader | None =None, experiments: list[str] | None =None,
+                                      focal_type: int | None =None, nbh_type: int | None =None, n_types: int | None =None,
                                       prediction_timestep: int =1, point_size: float =1, 
                                       palette: str ='seismic_r', colorbar_ndp: int =None):
 
@@ -366,6 +367,12 @@ def plot_attraction_repulsion_heatmap(model, datadir: str | None =None, batch_si
             Negates the need to construct a DataLoader from datadir.
         experiments: list[str] | None, default=None
             Specify which experiments to take data from for the DataLoader, if constructing one.
+        focal_type: int | None, default=None
+            Specify to only use focal cells of a given type.
+        nbh_type: int | None, default=None
+            Specify to only plot nbh cells of a given type.
+        n_types: int, default=2
+            Number of cell types.
         prediction_timestep: int, default=1
             Length of the interval over which the deep attention network was trained to predict cell displacement over.
         point_size: float, default=1
@@ -379,7 +386,7 @@ def plot_attraction_repulsion_heatmap(model, datadir: str | None =None, batch_si
 
     # Create data loader
     if dataloader is None:
-        dataset = cellTrajectoriesDataset(directory=datadir, experiments=experiments)
+        dataset = cellTrajectoriesDataset(directory=datadir, experiments=experiments, focal_type=focal_type, n_types=n_types)
         dataloader = DataLoader(dataset, batch_size=batch_size)
 
     X, y = next(iter(dataloader))
@@ -408,6 +415,17 @@ def plot_attraction_repulsion_heatmap(model, datadir: str | None =None, batch_si
 
     del predictions
 
+    # Filter down to specified neighbour type
+    if not nbh_type is None:
+        nbh_types = np.where(X[:,:,8+n_types:8+2*n_types]==1)[2]
+        row_idx = (nbh_types==nbh_type)
+        x = x[row_idx]
+        y = y[row_idx]
+        nbh_cell_displacements = nbh_cell_displacements[row_idx,:]
+        
+        predictions_all_cells = predictions_all_cells[row_idx,:]
+        predictions_drop = predictions_drop[row_idx,:]
+        
     del X
 
     # Compute proximity to neighbour cell location with the neighbour cell present/removed
@@ -447,7 +465,8 @@ def plot_attraction_repulsion_heatmap(model, datadir: str | None =None, batch_si
 # -----------------------------------------------------------------------------
 
 def plot_alignment_heatmap(model, datadir: str | None =None, batch_size: int =20000, 
-                           dataloader: DataLoader | None =None, experiments: list[str] | None =None, 
+                           dataloader: DataLoader | None =None, experiments: list[str] | None =None,
+                           focal_type: int | None =None, nbh_type: int | None =None, n_types: int | None =None,
                            point_size: float =1, palette: str ='seismic_r', colorbar_ndp: int | None =None):
 
     """ Plots an alignment heatmap for a given trained deep attention network and dataloader. Designed to
@@ -466,6 +485,12 @@ def plot_alignment_heatmap(model, datadir: str | None =None, batch_size: int =20
             Negates the need to construct a DataLoader from datadir.
         experiments: list[str] | None, default=None
             Specify which experiments to take data from for the dataset, if loading in a dataset from datadir.
+        focal_type: int | None, default=None
+            Specify to only use focal cells of a given type.
+        nbh_type: int | None, default=None
+            Specify to only plot nbh cells of a given type.
+        n_types: int, default=2
+            Number of cell types.
         point_size: float, default=1
             Size of points in the ARHM. Passed to s in seaborn.scatterplot().
         palette: str, default='seismic_r'
@@ -477,7 +502,7 @@ def plot_alignment_heatmap(model, datadir: str | None =None, batch_size: int =20
 
     # Create data loader
     if dataloader is None:
-        dataset = cellTrajectoriesDataset(directory=datadir, experiments=experiments)
+        dataset = cellTrajectoriesDataset(directory=datadir, experiments=experiments, focal_type=focal_type, n_types=n_types)
         dataloader = DataLoader(dataset, batch_size=batch_size)
 
     X, y = next(iter(dataloader))
@@ -506,6 +531,17 @@ def plot_alignment_heatmap(model, datadir: str | None =None, batch_size: int =20
 
     del predictions  
 
+    # Filter down to specified neighbour types
+    if not nbh_type is None:
+        nbh_types = np.where(X[:,:,8+n_types:8+2*n_types]==1)[2]
+        row_idx = (nbh_types==nbh_type)
+        x = x[row_idx]
+        y = y[row_idx]
+        neighbour_cell_velocities = neighbour_cell_velocities[row_idx,:]
+
+        predictions_all_cells = predictions_all_cells[row_idx,:]
+        predictions_drop = predictions_drop[row_idx,:]
+        
     del X
 
     neighbour_cell_velocities = F.normalize(neighbour_cell_velocities, p=2, dim=1)
