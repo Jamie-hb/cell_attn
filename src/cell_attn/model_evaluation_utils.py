@@ -19,10 +19,11 @@ def load_model(stdir: str):
         --------------
         stdir: str
             Directory where the deep attention network is stored, state_dict should be stored at stdir/model.pth.
+            load_model() will automatically determine how many cell types are in the model.
             
         Returns
         --------------
-        model: model_definition_utils.velocity_predictor
+        model: model_definition_utils.velocity_predictor | model_definition_utils.velocity_predictor_with_types
             Deep attention network model.
         
         """
@@ -34,8 +35,15 @@ def load_model(stdir: str):
 
     # Load state dictionary.
     model_state = torch.load(os.path.join(stdir, 'model.pth'), weights_only=True, map_location=device)
+
+    # Check how many cell types the model has.
+    n_types = (model_state['weight_network.fc0.weight'].shape[1] - 2) // 2
     
-    model = model_definition_utils.__dict__['velocity_predictor']()
+    # Load in appropriate model architecture
+    if n_types==0:
+        model = model_definition_utils.__dict__['velocity_predictor']()
+    else:
+        model = model_definition_utils.__dict__['velocity_predictor_with_types'](n_types=n_types)
 
     # Load model state
     model.load_state_dict(model_state)
@@ -44,7 +52,7 @@ def load_model(stdir: str):
 
 # -----------------------------------------------------------------------------
 
-def load_data(datadir: str, experiments: list[str] | None =None, batch_size: int =20000):
+def load_data(datadir: str, experiments: list[str] | None =None, focal_type: int | None =None, n_types: int | None =None, batch_size: int =20000):
     """ Loads trajectory input and label data in the form of a DataLoader.
         
         Parameters 
@@ -55,6 +63,10 @@ def load_data(datadir: str, experiments: list[str] | None =None, batch_size: int
             called labels.npy, as created by create_data_from_trajectories().
         experiments: list[str] | None, default=None
             Specify which experiments to take data from for the dataset.
+        focal_type: int | None, default=None
+            Specify to only use focal cells of a given type.
+        n_types: int | None, default=None
+            Number of cell types in data.
         batch_size: int, default=20000
             Batch size of the DataLoader.
             
@@ -64,8 +76,11 @@ def load_data(datadir: str, experiments: list[str] | None =None, batch_size: int
             DataLoader for trajectory data.
             
         """
+
+    if (not focal_type is None) & (n_types is None):
+        raise ValueError('If specifying a focal cell type, must also specify the number of cell types by passing to n_types.')
         
-    dataset = cellTrajectoriesDataset(directory=datadir, experiments=experiments)
+    dataset = cellTrajectoriesDataset(directory=datadir, experiments=experiments, focal_type=focal_type, n_types=n_types)
     dataloader = DataLoader(dataset, batch_size=batch_size)
 
     return dataloader    
