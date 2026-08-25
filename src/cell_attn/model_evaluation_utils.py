@@ -710,7 +710,8 @@ def weight_distance_plot(model, dataloader: DataLoader, plot_averages: bool =Tru
         
 # -------------------------------------------------------------
 
-def radial_weight_plot(model, rlim: tuple[float,float], r_meshsize: int =100, theta_meshsize: int =100):
+def radial_weight_plot(model, rlim: tuple[float,float], r_meshsize: int =100, theta_meshsize: int =100,
+                      focal_type: int | None =None, nbh_type: int | None =None, n_types: int | None =None):
     """ Plots radially averaged weight vs distance for the weight function of a deep atttention network.
         Designed to be called with an active matplotlib.pyplot.figure.
         
@@ -724,18 +725,39 @@ def radial_weight_plot(model, rlim: tuple[float,float], r_meshsize: int =100, th
             Number of points to compute average weight at.
         theta_meshsize: int, default=100 
             Number of angles to use when computing average weight.
+        focal_type: int | None, default=None
+            Type of focal cell.
+        nbh_type: int | None, default=None
+            Type of neighbour cell.
+        n_types: int | None, default=None
+            Number of cell types.
             
         """
+
+    if (not focal_type is None) & (n_types is None):
+        raise ValueError('If specifying a focal cell type, must also specify the number of cell types by passing to n_types.')
+
+    type_aware = (not focal_type is None)
     
     r_mesh = torch.linspace(rlim[0], rlim[1], r_meshsize)
     theta_mesh = torch.linspace(0, 2*np.pi, theta_meshsize)
+
+    if type_aware:
+        focal_type_array = torch.zeros((theta_meshsize, n_types))
+        nbh_type_array = torch.zeros((theta_meshsize, n_types))
+        
+        focal_type_array[:,focal_type] = 1 
+        nbh_type_array[:,nbh_type] = 1
 
     a = np.zeros(len(r_mesh))
     for i, r in enumerate(r_mesh):
         x = r*torch.cos(theta_mesh)
         y = r*torch.sin(theta_mesh)
         with torch.no_grad():
-            w = model.weight_network( torch.hstack((x.unsqueeze(-1), y.unsqueeze(-1))).float() ).numpy().flatten()
+            if type_aware:
+                w = model.weight_network( torch.hstack((x.unsqueeze(-1), y.unsqueeze(-1), focal_type_array, nbh_type_array)).float() ).numpy().flatten()
+            else:
+                w = model.weight_network( torch.hstack((x.unsqueeze(-1), y.unsqueeze(-1))).float() ).numpy().flatten()
         a[i] = w.mean()
 
     sns.lineplot(x=r_mesh, y=a, color='blue')
