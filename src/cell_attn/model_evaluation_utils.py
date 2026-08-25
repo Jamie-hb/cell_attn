@@ -668,6 +668,8 @@ def weight_distance_plot(model, dataloader: DataLoader, plot_averages: bool =Tru
 
         if not nbh_type is None:
             nbh_cell_displacements = nbh_cell_displacements[row_idx,:]
+            predictions_all_cells = predictions_all_cells[row_idx,:]
+            predictions_drop = predictions_drop[row_idx,:]
 
         # Compute attraction scores
         predicted_proximities = ((predictions_all_cells - nbh_cell_displacements)**2).sum(axis=1).sqrt()
