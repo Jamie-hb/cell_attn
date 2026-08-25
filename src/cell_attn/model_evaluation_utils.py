@@ -176,8 +176,8 @@ def ewma(x, w: float):
 # -----------------------------------------------------------------------------
 
 def plot_attention_heatmap(model, datadir: str | None =None, batch_size: int =20000, dataloader: DataLoader | None =None,
-                           experiments: list[str] | None =None,
-                           point_size: float =1, min_weight: float | None =None, max_weight: float | None=None,
+                           experiments: list[str] | None =None, focal_type: int | None =None, nbh_type: int | None =None,
+                           n_types: int | None =None, point_size: float =1, min_weight: float | None =None, max_weight: float | None=None,
                            palette: str ='gnuplot', colorbar_ndp: int | None =None):
     """ Plots an attention heatmap for a given trained deep attention network and DataLoader. Designed to
         be called with an active matplotlib.pyplot.figure.
@@ -195,6 +195,12 @@ def plot_attention_heatmap(model, datadir: str | None =None, batch_size: int =20
             Negates the need to construct a DataLoader from datadir.
         experiments: list[str] | None, default=None
             If constructing a DataLoader, specify which experiments to take data from.
+        focal_type: int | None, default=None
+            Specify to only use focal cells of a given type.
+        nbh_type: int | None, default=None
+            Specify to only plot nbh cells of a given type.
+        n_types: int | None, default=None
+            Number of cell types.
         point_size: float, default=1
             Size of points in the AHM. Passed to s in seaborn.scatterplot().
         min_weight: float | None, default=None
@@ -211,16 +217,25 @@ def plot_attention_heatmap(model, datadir: str | None =None, batch_size: int =20
         """
 
     if dataloader is None:
-        dataset = cellTrajectoriesDataset(directory=datadir, experiments=experiments)
+        dataset = cellTrajectoriesDataset(directory=datadir, experiments=experiments, focal_type=focal_type, n_types=n_types)
         dataloader = DataLoader(dataset, batch_size=batch_size)
     
     X, y = next(iter(dataloader))
 
+    # Extract weights for each neighbour cell
     with torch.no_grad():
         w = model.compute_weights(X).reshape((-1,)).numpy()
 
+    # Extract relative displacement for each neighbour cell
     x = X[:,:,6].reshape((-1,))
-    y = X[:,:,7].reshape((-1,))  
+    y = X[:,:,7].reshape((-1,))
+
+    # If specified, filter to only neighbour cells of given type
+    if not nbh_type is None:
+        nbh_types = np.where(X[:,:,8+n_types:8+2*n_types]==1)[2]
+        w = w[nbh_types==nbh_type]
+        x = x[nbh_types==nbh_type]
+        y = y[nbh_types==nbh_type]   
 
     # Determine color limits
     if max_weight is None:
