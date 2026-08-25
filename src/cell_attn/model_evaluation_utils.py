@@ -268,6 +268,7 @@ def plot_attention_heatmap(model, datadir: str | None =None, batch_size: int =20
 # -----------------------------------------------------------------------------
 
 def plot_weight_function(model, xlim: tuple[float,float], ylim: tuple[float,float],
+                         focal_type: int | None =None, nbh_type: int | None =None, n_types: int | None =None, 
                          palette: str ='gnuplot', cutoff_radius: float =None, show_center: bool =True, 
                          min_weight: float =0, max_weight: float | None =None, colorbar_ndp: int | None =None):
     """ Plot the trained weight function of a deep attention network. Designed to
@@ -281,6 +282,12 @@ def plot_weight_function(model, xlim: tuple[float,float], ylim: tuple[float,floa
             Limits for horizontal axis of plot.
         xlim: tuple[float,float]
             Limits for vertical axis of plot.
+        focal_type: int | None, default=None
+            Cell type of focal cell.
+        nbh_type: int | None, default=None
+            Cell type of neighbour cells.
+        n_types: int | None, default=None 
+            Number of cell types.
         pallete: str, default='gnuplot'
             Name of matplotlib colour palette to use.
         cutoff_radius: float, default=None
@@ -298,13 +305,27 @@ def plot_weight_function(model, xlim: tuple[float,float], ylim: tuple[float,floa
     if (not show_center) & (cutoff_radius==None):
         # NOTE: Currently no provision for having a seperate cutoff for display and for weight computation.
         raise ValueError('If choosing not to show the central circle, must specify cutoff_radius.')
-    
+
+    if (not focal_type is None) & (n_types is None):
+        raise ValueError('If specifying a focal cell type, must also specify the number of cell types by passing to n_types.')
+        
     x, y = torch.meshgrid(torch.linspace(xlim[0],xlim[1],501), torch.linspace(ylim[0],ylim[1],501), indexing='ij')
     x = x.flatten()
     y = y.flatten()
     
-    with torch.no_grad():
-        w = model.weight_network( torch.hstack((x.unsqueeze(-1), y.unsqueeze(-1))).float() ).numpy().flatten()
+    if type_aware:
+        focal_type_array = torch.zeros((len(x), n_types))
+        nbh_type_array = torch.zeros((len(x), n_types))
+        
+        focal_type_array[:,focal_type] = 1 
+        nbh_type_array[:,nbh_type] = 1
+    
+        with torch.no_grad():
+            w = model.weight_network( torch.hstack((x.unsqueeze(-1), y.unsqueeze(-1), focal_type_array, nbh_type_array)).float() ).numpy().flatten()
+
+    else:
+        with torch.no_grad():
+            w = model.weight_network( torch.hstack((x.unsqueeze(-1), y.unsqueeze(-1))).float() ).numpy().flatten()
 
     x = x.numpy()
     y = y.numpy()
