@@ -4,7 +4,6 @@ import os
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import seaborn as sns
-from IPython.display import HTML
 from warnings import warn
 import gc
 from itertools import compress
