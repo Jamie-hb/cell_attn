@@ -371,7 +371,7 @@ def plot_weight_function(model, xlim: tuple[float,float], ylim: tuple[float,floa
 def plot_attraction_repulsion_heatmap(model, datadir: str | None =None, batch_size: int =20000, 
                                       dataloader: DataLoader | None =None, experiments: list[str] | None =None,
                                       focal_type: int | None =None, nbh_type: int | None =None, n_types: int | None =None,
-                                      prediction_timestep: int =1, point_size: float =1, 
+                                      prediction_timestep: int =1, point_size: float =1, colour_bound: float | None =None,
                                       palette: str ='seismic_r', colorbar_ndp: int =None):
 
     """ Plots an attraction-repulsion heatmap for a given trained deep attention network and DataLoader. Designed to
@@ -400,6 +400,8 @@ def plot_attraction_repulsion_heatmap(model, datadir: str | None =None, batch_si
             Length of the interval over which the deep attention network was trained to predict cell displacement over.
         point_size: float, default=1
             Size of points in the ARHM. Passed to s in seaborn.scatterplot().
+        colour_bound: float | None, default=None
+            Manually set the limits of the colour scheme.
         palette: str, default='seismic_r'
             Specify which matplotlib colour palette to use.
         colorbar_ndp: int | None, default=None
@@ -458,9 +460,11 @@ def plot_attraction_repulsion_heatmap(model, datadir: str | None =None, batch_si
     weighted_attraction_scores = 1 * (nbh_drop_proximities - predicted_proximities).detach().numpy()
 
     # Compute colour palette bounds
-    neg_scores = weighted_attraction_scores[weighted_attraction_scores<0]
-    pos_scores = weighted_attraction_scores[weighted_attraction_scores>0]
-    colour_bound = np.maximum(np.percentile(pos_scores, 99), np.percentile(np.abs(neg_scores), 99))
+    if colour_bound is None:
+        neg_scores = weighted_attraction_scores[weighted_attraction_scores<0]    
+        pos_scores = weighted_attraction_scores[weighted_attraction_scores>0]
+            
+        colour_bound = np.maximum(np.percentile(pos_scores, 99), np.percentile(np.abs(neg_scores), 99))
 
     # Make plot
     sns.scatterplot(x=x, y=y, hue=weighted_attraction_scores, palette=palette, hue_norm=(-colour_bound,colour_bound), s=point_size, legend=False)
@@ -476,6 +480,7 @@ def plot_attraction_repulsion_heatmap(model, datadir: str | None =None, batch_si
     sm = plt.cm.ScalarMappable(cmap=palette, norm=norm)
     plt.colorbar(sm, ax=plt.gca(), location='right', pad=0.02, shrink=0.6, extend='both', extendfrac=0.065, aspect=17.5, ticks=ticks)
     plt.annotate(text='Attraction', xy=(1.02, 0.9), xycoords='axes fraction', fontsize=15)
+    plt.annotate(text='Repulsion', xy=(1.02, 0.05), xycoords='axes fraction', fontsize=15)
 
     # Tidy up axes
     plt.xticks(fontsize=17.5)
