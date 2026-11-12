@@ -16,7 +16,8 @@ from torch.utils.data import Dataset
 
 # ===== Data creation =====
 
-def create_data_from_trajectories(X: np.ndarray, nn: int, timestep: int, stdir: str, t_min: int =0, t_max: int | None =None, cell_types: np.ndarray | None =None, memory_saver: bool =False):
+def create_data_from_trajectories(X: np.ndarray, nn: int, timestep: int, stdir: str, t_min: int =0, t_max: int | None =None, cell_types: np.ndarray | None =None,
+                                  single_experiment: bool =False, val_prop: float = 0.1, memory_saver: bool =False):
     """ Takes in cell trajectory data in the form of a trajectory matrix, and creates input and label data ready to
         be trained on by a deep attention network.
 
@@ -36,6 +37,12 @@ def create_data_from_trajectories(X: np.ndarray, nn: int, timestep: int, stdir: 
             Upper limit of time window of trajectory data to use. If given will filter X down to X[:,:,:t_max] before other computations.
         cell_types: numpy.ndarray | None, default=None
             1D array of length n_cells specifying the type of each cell. If this is provided, the input data will include cell type information.
+        single_experiment: bool, default=False
+            Set to true if you only have one experiment. If set to True, then the input data will be split randomly into tranining and validation data
+            and put into stdir/training_data/experiment_0 and stdir/validation_data/experiment_0 respectively. The proportion of validation data is
+            controlled by val_prop.
+        val_prop: float, default=0.1
+            If single_experiment==True, then this controls the proportion of data that is set as validation data.
         memory_saver: bool, default=False
             If memory_saver=True, then a more memory efficient (but slower) algorithm will be used. Note this will only use a significantly 
             lower amount of memory if the trajectory data matrix contains a significant amount of missing data. 
@@ -78,10 +85,13 @@ def create_data_from_trajectories(X: np.ndarray, nn: int, timestep: int, stdir: 
         t_max = X.shape[2] # if t_max is not given ensure default behaviour is to not impose an upper time limit
     X = X[:,:,t_min:t_max]
 
-    if memory_saver:
-        create_data_from_trajectories_memory_saver(X, nn, timestep, stdir, cell_types)
+    if single_experiment:
+        create_data_from_trajectories_memory_saver_single_experiment(X, nn, timestep, stdir, cell_types, val_prop)
     else:
-        create_data_from_trajectories_vanilla(X, nn, timestep, stdir, cell_types)
+        if memory_saver:
+            create_data_from_trajectories_memory_saver(X, nn, timestep, stdir, cell_types)
+        else:
+            create_data_from_trajectories_vanilla(X, nn, timestep, stdir, cell_types)
         
 
 def create_data_from_trajectories_vanilla(X: np.ndarray, nn: int, timestep: int, stdir: str, cell_types: np.ndarray | None =None):
@@ -310,6 +320,195 @@ def create_data_from_trajectories_memory_saver(X: np.ndarray, nn: int, timestep:
     # save results
     np.save(os.path.join(stdir, 'input_data.npy'), data)
     np.save(os.path.join(stdir, 'labels.npy'), velocities)
+
+    print('done :)')
+
+
+def create_data_from_trajectories_memory_saver_single_experiment(X: np.ndarray, nn: int, timestep: int, stdir: str, cell_types: np.ndarray | None =None, val_prop: float):
+    """ Alternative function to turn a trajectory matrix into input and label data when the matrix is large and contains
+        a large amount of missing data. Called upon by create_data_from_trajectories(). """
+
+    # Strategy for dealing with missing data: Loop through all (focal cell, time) pairs and record which have full cell trajectory data (on both focal cell and nearest neighbour
+    # cells), then only compute ML input matrix for these pairs. In this way, the ML data matrix is initialised at the size it ends up as, rather than initialised at the maximum 
+    # possible size if there were no missing data then trimmed down later. This can use significantly less memory if the cell trajectory matrix contains a significant amount of 
+    # missing data.
+
+    rng = np.random.default_rng()
+    
+    # Check whether cell type information is being recorded
+    record_types = not cell_types is None
+
+    if record_types:
+        n_types = len(np.unique(cell_types))
+    else:
+        n_types = 0
+        
+    n_cells = X.shape[1]
+    n_datapoints = 0
+
+    # --- Work out which data to keep ---
+
+    X_bool = np.isnan(X)
+    if X_bool.sum() < 0.05*X.size:
+        warn('X does not contain much (<5%) missing data, so passing memory_saver=True will not save that much memory.')
+    
+    # Get times where focal cell has data at times t, t-1, t-2, t+timestep
+    X_bool = (~X_bool).all(axis=0)
+    
+    focal_cell_has_data = X_bool[:,2:-timestep] & X_bool[:,1:-timestep-1] & X_bool[:,0:-timestep-2] & X_bool[:,2+timestep:]
+
+    del X_bool
+    gc.collect()
+
+    # Get times where focal cell moves
+    focal_cell_moves = ~((np.equal(X[0,:,2:-timestep], X[0,:,1:-timestep-1]) & np.equal(X[1,:,2:-timestep], X[1,:,1:-timestep-1])))
+
+    # Compute matrix indicating which (focal cell, time pairs) have sufficient data    
+    cell_time_matrix = np.pad(focal_cell_has_data & focal_cell_moves, ((0,0),(2,timestep)), mode='constant', constant_values=False)
+
+    del focal_cell_moves
+    del focal_cell_has_data
+    gc.collect()
+    
+    # Create a list of admissable time points for each focal cell
+    cell_time_lists = [ [] ]*n_cells
+    for i in range(n_cells):
+        cell_time_lists[i] = list(np.argwhere(cell_time_matrix[i,:]).flatten())
+
+    del cell_time_matrix
+    gc.collect()
+    
+    # Go through the admissable (focal cell, time) pairs, removing those where the n-nbh cells do not have data at times t, t-1
+    for focal_cell, admissable_times in enumerate(cell_time_lists):
+        # Extract times with sufficient focal cell data
+        times_to_keep = [True]*len(admissable_times)
+    
+        # Get distances to all nbh cells at all admissable times
+        D = ((X[:,:,admissable_times] - np.expand_dims(X[:,focal_cell,admissable_times], axis=1))**2).sum(axis=0)
+
+        nn_idx = D.argsort(axis=0)[1:nn+1,:]
+        # For each time point, get n-nbh data and see whether it is all present
+        for i, t in enumerate(admissable_times):
+            if np.isnan(D[nn_idx[-1,i],i]):
+                times_to_keep[i] = False
+            else:
+                X_nn = X[:,nn_idx[:,i],:][:,:,[t-1,t]]
+                # check none of it is na
+                if np.isnan(X_nn).any():
+                    times_to_keep[i] = False
+                    
+        # Update cell_time_lists and n_datapoints
+        cell_time_lists[focal_cell] = list(compress(admissable_times, times_to_keep))
+        n_datapoints += sum(times_to_keep)
+
+    del D
+    del nn_idx
+    gc.collect()
+
+
+    # --- Create data matrix ---
+
+    n_validation_datapoints = int(val_prop*n_datapoints)
+    n_training_datapoints = n_datapoints - n_validation_datapoints
+    
+    training_data = np.zeros((n_training_datapoints, nn, 8+2*n_types))
+    training_velocities = np.zeros((n_training_datapoints, 2))
+
+    validation_data = np.zeros((n_validation_datapoints, nn, 8+2*n_types))
+    validation_velocities = np.zeros((n_validation_datapoints, 2))
+
+    training_rows = rng.choice([i for i in range(n_datapoints)], size=n_training_datapoints, replace=False)
+    validation_rows = [i for i in range(n_datapoints) if not i in training_rows]
+
+    row = 0
+    training_row = 0
+    validation_row = 0 # counter for which row to add data to
+    
+    for focal_cell in range(n_cells):
+        for t in cell_time_lists[focal_cell]:
+            
+            focal_cell_data = X[:,focal_cell,[t-2,t-1,t,t+timestep]]
+            
+            # determine indices of nearest nbhs
+            distances = (focal_cell_data[0,2] - X[0,:,t])**2 + (focal_cell_data[1,2] - X[1,:,t])**2
+            nearest_neighbours = distances.argsort()[1:nn+1] # NOTE: argsort() treats nan as infinitely large, so this code should work unless there are <nn non-na nbhs
+            
+            v = np.array([focal_cell_data[0,2] - focal_cell_data[0,1],
+                          focal_cell_data[1,2] - focal_cell_data[1,1]])
+            
+            v_unit = v / np.sqrt((v**2).sum())
+            cob_matrix = np.linalg.inv(np.array([[v_unit[1], v_unit[0]],
+                                                 [-v_unit[0],v_unit[1]]]))
+        
+            # Fill out input data from nearest neighbour cells 
+            nbh_cell_data = X[:,nearest_neighbours,:][:,:,[t-1,t]]
+
+            if row in training_rows:
+                for k in range(nn):
+                    # nbh cell displacement
+                    training_data[training_row, k, 0] = nbh_cell_data[0,k,1] - focal_cell_data[0,2]
+                    training_data[training_row, k ,1] = nbh_cell_data[1,k,1] - focal_cell_data[1,2]
+                    # focal cell velocity
+                    training_data[training_row, k, 2] = v[0]
+                    training_data[training_row, k, 3] = v[1]
+                    # nbh cell velocity
+                    training_data[training_row, k, 4] = nbh_cell_data[0,k,1] - nbh_cell_data[0,k,0]
+                    training_data[training_row, k, 5] = nbh_cell_data[1,k,1] - nbh_cell_data[1,k,0]
+                    
+                    # Versions in focal cell co-ordinates
+                    # nbh cell displacement 
+                    training_data[training_row, k, 6:8] = np.matmul(cob_matrix, training_data[training_row, k, 0:2])
+    
+                    # focal and nbh cell type information, one-hot encoded
+                    if record_types:
+                        training_data[training_row, k, 8+int(cell_types[focal_cell])] = 1
+                        training_data[training_row, k, 8+n_types+int(cell_types[nearest_neighbours[k]])] = 1
+
+                # Compute velocity label
+                training_velocities[training_row,0] = focal_cell_data[0,3] - focal_cell_data[0,2]
+                training_velocities[training_row,1] = focal_cell_data[1,3] - focal_cell_data[1,2]
+
+                training_row += 1
+
+            else:
+                for k in range(nn):
+                    # nbh cell displacement
+                    validation_data[validation_row, k, 0] = nbh_cell_data[0,k,1] - focal_cell_data[0,2]
+                    validation_data[validation_row, k ,1] = nbh_cell_data[1,k,1] - focal_cell_data[1,2]
+                    # focal cell velocity
+                    validation_data[validation_row, k, 2] = v[0]
+                    validation_data[validation_row, k, 3] = v[1]
+                    # nbh cell velocity
+                    validation_data[validation_row, k, 4] = nbh_cell_data[0,k,1] - nbh_cell_data[0,k,0]
+                    validation_data[validation_row, k, 5] = nbh_cell_data[1,k,1] - nbh_cell_data[1,k,0]
+                    
+                    # Versions in focal cell co-ordinates
+                    # nbh cell displacement 
+                    validation_data[validation_row, k, 6:8] = np.matmul(cob_matrix, validation_data[validation_row, k, 0:2])
+    
+                    # focal and nbh cell type information, one-hot encoded
+                    if record_types:
+                        validation_data[validation_row, k, 8+int(cell_types[focal_cell])] = 1
+                        validation_data[validation_row, k, 8+n_types+int(cell_types[nearest_neighbours[k]])] = 1
+
+                # Compute velocity label
+                validation_velocities[validation_row,0] = focal_cell_data[0,3] - focal_cell_data[0,2]
+                validation_velocities[validation_row,1] = focal_cell_data[1,3] - focal_cell_data[1,2]
+
+                validation_row += 1
+
+            row += 1
+
+    del X
+    del cell_time_lists
+    gc.collect()
+    
+    # save results
+    np.save(os.path.join(stdir, 'training_data/experiment_0/input_data.npy'), training_data)
+    np.save(os.path.join(stdir, 'training_data/experiment_0/labels.npy'), training_velocities)
+
+    np.save(os.path.join(stdir, 'validation_data/experiment_0/input_data.npy'), validation_data)
+    np.save(os.path.join(stdir, 'validation_data/experiment_0/labels.npy'), validation_velocities)
 
     print('done :)')
 
