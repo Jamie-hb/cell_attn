@@ -8,7 +8,7 @@ import torch
 import pandas as pd
 from datetime import datetime
 
-def train_loop(model, training_dataloader, test_dataloader, num_epochs, burn_in, patience, loss_fn, learning_rate, min_learning_rate,
+def train_loop(model, training_dataloader, test_dataloader, num_epochs, burn_in, patience, save_every, loss_fn, learning_rate, min_learning_rate,
                stloc, device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')):
 
     """ Training loop. Called on by train_model.train_deep_attention_network().
@@ -28,6 +28,8 @@ def train_loop(model, training_dataloader, test_dataloader, num_epochs, burn_in,
         patience: int
             Number of epochs to allow a lack of improvement for before terminating training. 
             To disable early stopping set this equal to num_epochs.
+        save_every: int | None
+            Save interim model state after every save_every batches.
         loss_fn: 
             Loss function to use for training.
         learning_rate: float
@@ -79,7 +81,7 @@ def train_loop(model, training_dataloader, test_dataloader, num_epochs, burn_in,
         scheduler.step()
 
         pd.DataFrame({'train_loss':train_losses, 'test_loss':test_losses}).to_csv(os.path.join(stloc, 'losses.csv'), index=False)
-
+            
         with torch.no_grad():
             loss = test_loop(model, test_dataloader, loss_fn)
         test_losses_per_epoch.append(loss)
@@ -88,6 +90,13 @@ def train_loop(model, training_dataloader, test_dataloader, num_epochs, burn_in,
 
         pd.DataFrame({'test_loss':test_losses_per_epoch}).to_csv(os.path.join(stloc, 'metrics_per_epoch.csv'), index=False)
 
+        # Save interim model states
+        if not save_every is None:
+            if batch % save_every == 0:
+                os.makedirs(os.path.join(stloc, str(batch)+'_batches'), exist_ok=True)
+                add_to_log('Saving interim model')
+                torch.save(model.state_dict(), os.path.join(stloc, str(batch)+'_batches', 'model.pth'))                
+        
         # Early stopping
         # Note that if condition will always activate at epoch 0
         if (epoch==0) | (loss == min(test_losses_per_epoch)):

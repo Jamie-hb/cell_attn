@@ -12,7 +12,9 @@ from cell_attn.training_utils import train_loop
 
 def train_deep_attention_network(datadir: str, stdir: str, 
                                  training_subdirs: list[str] | None =None, validation_subdirs: list[str] | None =None, 
-                                 training_speed: str ='auto', batch_size: int | None =None, num_epochs: int | None =None, patience: int | None =None, burn_in: int | None =None, 
+                                 training_speed: str ='auto', batch_size: int | None =None, 
+                                 num_epochs: int | None =None, patience: int | None =None, burn_in: int | None =None,
+                                 save_every: int | None =None,
                                  learning_rate: list[float] =[0.001, 0.00001], type_aware: bool =False, n_types: int =2):
     """ Trains a deep attention network on a cell trajectory data set. 
 
@@ -50,6 +52,8 @@ def train_deep_attention_network(datadir: str, stdir: str,
             Number of epochs to wait before beginning counting for early stopping.
             If batch_size, patience, patience and burn_in are given, this will override the training_speed argument.
             If some but not all of these are given, then the behaviour specified by training_speed will take precedence.
+        save_every: int | None, default=None
+            If specified, then along with the final model, the model state after every save_every batches will be saved in the subdir stdir/x_batches.
         learning_rate: list[float], default=[0.001, 0.00001]
             Maximum and minimum learning rate to anneal between.
         type_aware: bool, default=False 
@@ -126,5 +130,5 @@ def train_deep_attention_network(datadir: str, stdir: str,
 
     # Train deep attention network
     train_loop(model=model, training_dataloader=training_dataloader, test_dataloader=validation_dataloader,
-               num_epochs=num_epochs, burn_in=burn_in, patience=patience,
+               num_epochs=num_epochs, burn_in=burn_in, patience=patience, save_every=save_every,
                loss_fn=nn.MSELoss(), learning_rate=learning_rate[0], min_learning_rate=learning_rate[1], stloc=stdir)                                   
