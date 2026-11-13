@@ -324,7 +324,7 @@ def create_data_from_trajectories_memory_saver(X: np.ndarray, nn: int, timestep:
     print('done :)')
 
 
-def create_data_from_trajectories_memory_saver_single_experiment(X: np.ndarray, nn: int, timestep: int, stdir: str, cell_types: np.ndarray | None =None, val_prop: float):
+def create_data_from_trajectories_memory_saver_single_experiment(X: np.ndarray, nn: int, timestep: int, stdir: str, cell_types: np.ndarray | None =None, val_prop: float =0.1):
     """ Alternative function to turn a trajectory matrix into input and label data when the matrix is large and contains
         a large amount of missing data. Called upon by create_data_from_trajectories(). """
 
