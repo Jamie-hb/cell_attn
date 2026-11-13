@@ -29,7 +29,7 @@ def train_loop(model, training_dataloader, test_dataloader, num_epochs, burn_in,
             Number of epochs to allow a lack of improvement for before terminating training. 
             To disable early stopping set this equal to num_epochs.
         save_every: int | None
-            Save interim model state after every save_every batches.
+            Save interim model state after every save_every epochs.
         loss_fn: 
             Loss function to use for training.
         learning_rate: float
@@ -92,10 +92,10 @@ def train_loop(model, training_dataloader, test_dataloader, num_epochs, burn_in,
 
         # Save interim model states
         if not save_every is None:
-            if batch % save_every == 0:
-                os.makedirs(os.path.join(stloc, str(batch)+'_batches'), exist_ok=True)
+            if epoch % save_every == 0:
+                os.makedirs(os.path.join(stloc, str(batch)+'_epochs'), exist_ok=True)
                 add_to_log('Saving interim model')
-                torch.save(model.state_dict(), os.path.join(stloc, str(batch)+'_batches', 'model.pth'))                
+                torch.save(model.state_dict(), os.path.join(stloc, str(batch)+'_epochs', 'model.pth'))                
         
         # Early stopping
         # Note that if condition will always activate at epoch 0
